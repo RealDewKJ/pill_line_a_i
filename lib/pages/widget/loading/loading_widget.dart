@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'loading_model.dart';
 export 'loading_model.dart';
 
@@ -52,7 +51,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
               sigmaY: 10.0,
             ),
             child: Container(
-              decoration: BoxDecoration(
+              decoration: const BoxDecoration(
                 color: Color(0xC9FFFFFF),
                 shape: BoxShape.circle,
               ),
@@ -61,11 +60,9 @@ class _LoadingWidgetState extends State<LoadingWidget> {
                 width: () {
                   if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                     return 84.0;
-                  } else if (MediaQuery.sizeOf(context).width <
-                      kBreakpointMedium) {
+                  } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                     return 84.0;
-                  } else if (MediaQuery.sizeOf(context).width <
-                      kBreakpointLarge) {
+                  } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                     return 92.0;
                   } else {
                     return 92.0;
@@ -74,11 +71,9 @@ class _LoadingWidgetState extends State<LoadingWidget> {
                 height: () {
                   if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                     return 84.0;
-                  } else if (MediaQuery.sizeOf(context).width <
-                      kBreakpointMedium) {
+                  } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                     return 84.0;
-                  } else if (MediaQuery.sizeOf(context).width <
-                      kBreakpointLarge) {
+                  } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                     return 92.0;
                   } else {
                     return 92.0;
@@ -94,19 +89,16 @@ class _LoadingWidgetState extends State<LoadingWidget> {
           'กำลังโหลด...',
           style: FlutterFlowTheme.of(context).bodyMedium.override(
                 font: GoogleFonts.sarabun(
-                  fontWeight:
-                      FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                  fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
                   fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                 ),
                 color: FlutterFlowTheme.of(context).secondaryBackground,
                 fontSize: () {
                   if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                     return 14.0;
-                  } else if (MediaQuery.sizeOf(context).width <
-                      kBreakpointMedium) {
+                  } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                     return 14.0;
-                  } else if (MediaQuery.sizeOf(context).width <
-                      kBreakpointLarge) {
+                  } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                     return 16.0;
                   } else {
                     return 16.0;
@@ -117,7 +109,7 @@ class _LoadingWidgetState extends State<LoadingWidget> {
                 fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
               ),
         ),
-      ].divide(SizedBox(height: 16.0)),
+      ].divide(const SizedBox(height: 16.0)),
     );
   }
 }

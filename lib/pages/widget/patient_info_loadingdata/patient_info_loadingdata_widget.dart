@@ -1,15 +1,9 @@
-import 'package:pill_line_a_i/pages/widget/patient_info_nodata/patient_info_nodata_model.dart';
-
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'patient_info_loadingdata_model.dart';
 export 'patient_info_loadingdata_model.dart';
 
@@ -51,8 +45,8 @@ class _PatientInfoLoadingdataWidgetState extends State<PatientInfoLoadingdataWid
             curve: Curves.easeInOut,
             delay: 0.0.ms,
             duration: 600.0.ms,
-            begin: Offset(-40.0, 0.0),
-            end: Offset(0.0, 0.0),
+            begin: const Offset(-40.0, 0.0),
+            end: const Offset(0.0, 0.0),
           ),
         ],
       ),
@@ -72,7 +66,7 @@ class _PatientInfoLoadingdataWidgetState extends State<PatientInfoLoadingdataWid
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             blurRadius: 8.0,
             color: Color(0x19F8F9FA),
@@ -88,47 +82,32 @@ class _PatientInfoLoadingdataWidgetState extends State<PatientInfoLoadingdataWid
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100.0),
         child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: 20.0,
-            sigmaY: 20.0,
-          ),
+          filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(32.0),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1.5,
+              ),
               boxShadow: [
                 BoxShadow(
-                  blurRadius: 16.0,
-                  color: Color(0x1AF8F9FA),
-                  offset: Offset(
-                    0.0,
-                    0.0,
-                  ),
-                  spreadRadius: 8.0,
-                )
+                  blurRadius: 24,
+                  spreadRadius: 4,
+                  offset: Offset(0, 0),
+                  color: Colors.white.withOpacity(0.1),
+                ),
               ],
-              borderRadius: BorderRadius.circular(100.0),
-              border: Border.all(
-                color: Color(0x4CE9ECEF),
-                width: () {
-                  if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                    return 2.0;
-                  } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                    return 2.0;
-                  } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                    return 4.0;
-                  } else {
-                    return 4.0;
-                  }
-                }(),
-              ),
             ),
-            child: Container(
+            child: SizedBox(
               width: 80,
               height: 80,
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(width: 24),
+                  const SizedBox(width: 24),
                   SizedBox(
                     width: 40,
                     height: 40,
@@ -139,7 +118,7 @@ class _PatientInfoLoadingdataWidgetState extends State<PatientInfoLoadingdataWid
                       ),
                     ),
                   ),
-                  SizedBox(width: 24),
+                  const SizedBox(width: 24),
                   Expanded(
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -154,7 +133,7 @@ class _PatientInfoLoadingdataWidgetState extends State<PatientInfoLoadingdataWid
                                 color: FlutterFlowTheme.of(context).primaryText,
                               ),
                         ),
-                        SizedBox(height: 8),
+                        const SizedBox(height: 8),
                         Text(
                           'กรุณารอสักครู่ Pill Line AI กำลังเตรียมข้อมูลให้คุณ',
                           style: FlutterFlowTheme.of(context).bodyMedium.override(

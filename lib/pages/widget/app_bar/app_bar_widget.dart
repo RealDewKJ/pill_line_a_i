@@ -5,10 +5,8 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/pages/widget/patient_info/patient_info_widget.dart';
 import '/pages/widget/patient_info_nodata/patient_info_nodata_widget.dart';
-import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'app_bar_model.dart';
 export 'app_bar_model.dart';
 
@@ -75,7 +73,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           Opacity(
             opacity: 0.2,
             child: Align(
-              alignment: AlignmentDirectional(-1.0, 1.0),
+              alignment: const AlignmentDirectional(-1.0, 1.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(8.0),
                 child: Image.asset(
@@ -92,7 +90,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     }
                   }(),
                   fit: BoxFit.cover,
-                  alignment: Alignment(1.0, 1.0),
+                  alignment: const Alignment(1.0, 1.0),
                 ),
               ),
             ),
@@ -100,7 +98,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
           Opacity(
             opacity: 0.6,
             child: Align(
-              alignment: AlignmentDirectional(1.0, 1.0),
+              alignment: const AlignmentDirectional(1.0, 1.0),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(0.0),
                 child: Image.asset(
@@ -117,7 +115,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     }
                   }(),
                   fit: BoxFit.cover,
-                  alignment: Alignment(1.0, 1.0),
+                  alignment: const Alignment(1.0, 1.0),
                 ),
               ),
             ),
@@ -220,14 +218,14 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                           }
                         }(),
                         decoration: BoxDecoration(
-                          color: Color(0xA6F8F9FA),
+                          color: const Color(0xA6F8F9FA),
                           borderRadius: BorderRadius.circular(14.0),
                           border: Border.all(
-                            color: Color(0x35F8F9FA),
+                            color: const Color(0x35F8F9FA),
                           ),
                         ),
                         child: Padding(
-                          padding: EdgeInsets.all(4.0),
+                          padding: const EdgeInsets.all(4.0),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(8.0),
                             child: Image.asset(
@@ -263,7 +261,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                         fontWeight: FlutterFlowTheme.of(context).headlineSmall.fontWeight,
                         fontStyle: FlutterFlowTheme.of(context).headlineSmall.fontStyle,
                         shadows: [
-                          Shadow(
+                          const Shadow(
                             color: Color(0x806C757D),
                             offset: Offset(2.0, 2.0),
                             blurRadius: 2.0,
@@ -271,7 +269,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                         ],
                       ),
                     ),
-                  ].divide(SizedBox(width: 12.0)),
+                  ].divide(const SizedBox(width: 12.0)),
                 ),
                 Stack(
                   children: [
@@ -279,13 +277,13 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                         ? wrapWithModel(
                             model: _model.patientInfoNodataModel,
                             updateCallback: () => safeSetState(() {}),
-                            child: PatientInfoNodataWidget(),
+                            child: const PatientInfoNodataWidget(),
                           )
                         : widget.patientinfo == false
                             ? wrapWithModel(
                                 model: _model.patientInfoNodataModel,
                                 updateCallback: () => safeSetState(() {}),
-                                child: PatientInfoLoadingdataWidget(),
+                                child: const PatientInfoLoadingdataWidget(),
                               )
                             : wrapWithModel(
                                 model: _model.patientInfoModel,

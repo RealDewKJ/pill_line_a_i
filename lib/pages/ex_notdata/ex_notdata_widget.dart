@@ -1,15 +1,15 @@
-import 'package:pill_line_a_i/models/ovst_pill_line_model.dart';
+import 'dart:developer';
+
+import 'package:pill_line_a_i/controllers/pill_line_controller.dart';
+import 'package:pill_line_a_i/controllers/socket_controller.dart';
+import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/pages/widget/app_bar/app_bar_widget.dart';
 import '/pages/widget/no_data/no_data_widget.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'ex_notdata_model.dart';
 export 'ex_notdata_model.dart';
 
@@ -25,22 +25,65 @@ class ExNotdataWidget extends StatefulWidget {
 
 class _ExNotdataWidgetState extends State<ExNotdataWidget> {
   late ExNotdataModel _model;
-
+  final socketController = serviceLocator<SocketController>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
-
+  final pillLineController = serviceLocator<PillLineController>();
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ExNotdataModel());
+    log('configure socket');
+    socketController.configure(
+      context: context,
+      onMessage: (msg) {
+        if (msg.contains('Fetched drugitems for VN:')) {
+          handleFetchedDrugitemsMessage(msg);
+        }
+      },
+      onConnectionStatusChanged: (status) {
+        setState(() {});
+      },
+    );
 
+    // socketController.initSocket();
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
   void dispose() {
     _model.dispose();
-
+    // socketController.dispose();
     super.dispose();
+  }
+  // @override
+  // void did
+
+  handleFetchedDrugitemsMessage(msg) async {
+    const prefix = 'Fetched drugitems for VN:';
+    pillLineController.vn = extractVNFromMessage(msg, prefix) ?? '';
+    log('VN: ${pillLineController.vn}');
+    if (pillLineController.vn.isEmpty) {
+      log('VN not found in message.');
+      return;
+    }
+    pillLineController.pillLine = [];
+    context.pushNamed(
+      HomePageWidget.routeName,
+      extra: <String, dynamic>{
+        kTransitionInfoKey: const TransitionInfo(
+          hasTransition: true,
+          transitionType: PageTransitionType.fade,
+          duration: Duration(milliseconds: 0),
+        ),
+      },
+    );
+  }
+
+  String? extractVNFromMessage(String msg, String prefix) {
+    if (msg.contains(prefix)) {
+      return msg.substring(msg.indexOf(prefix) + prefix.length).trim();
+    }
+    return null;
   }
 
   @override
@@ -78,7 +121,7 @@ class _ExNotdataWidgetState extends State<ExNotdataWidget> {
               child: wrapWithModel(
                 model: _model.appBarModel,
                 updateCallback: () => safeSetState(() {}),
-                child: AppBarWidget(
+                child: const AppBarWidget(
                   patientinfo: false,
                   nodata: true,
                 ),
@@ -89,10 +132,10 @@ class _ExNotdataWidgetState extends State<ExNotdataWidget> {
                 width: double.infinity,
                 decoration: BoxDecoration(
                   gradient: LinearGradient(
-                    colors: [Color(0x00F8F9FA), Color(0xE6F8F9FA), FlutterFlowTheme.of(context).primaryBackground],
-                    stops: [0.0, 0.15, 0.2],
-                    begin: AlignmentDirectional(0.0, -1.0),
-                    end: AlignmentDirectional(0, 1.0),
+                    colors: [const Color(0x00F8F9FA), const Color(0xE6F8F9FA), FlutterFlowTheme.of(context).primaryBackground],
+                    stops: const [0.0, 0.15, 0.2],
+                    begin: const AlignmentDirectional(0.0, -1.0),
+                    end: const AlignmentDirectional(0, 1.0),
                   ),
                 ),
                 child: Padding(
@@ -132,33 +175,15 @@ class _ExNotdataWidgetState extends State<ExNotdataWidget> {
                     children: [
                       Expanded(
                         child: Align(
-                          alignment: AlignmentDirectional(0.0, 0.0),
-                          child: InkWell(
-                            splashColor: Colors.transparent,
-                            focusColor: Colors.transparent,
-                            hoverColor: Colors.transparent,
-                            highlightColor: Colors.transparent,
-                            onTap: () async {
-                              context.pushNamed(
-                                HomePageWidget.routeName,
-                                extra: <String, dynamic>{
-                                  kTransitionInfoKey: TransitionInfo(
-                                    hasTransition: true,
-                                    transitionType: PageTransitionType.fade,
-                                    duration: Duration(milliseconds: 0),
-                                  ),
-                                },
-                              );
-                            },
-                            child: wrapWithModel(
-                              model: _model.noDataModel,
-                              updateCallback: () => safeSetState(() {}),
-                              child: NoDataWidget(),
-                            ),
+                          alignment: const AlignmentDirectional(0.0, 0.0),
+                          child: wrapWithModel(
+                            model: _model.noDataModel,
+                            updateCallback: () => safeSetState(() {}),
+                            child: const NoDataWidget(),
                           ),
                         ),
                       ),
-                    ].divide(SizedBox(height: 12.0)),
+                    ].divide(const SizedBox(height: 12.0)),
                   ),
                 ),
               ),

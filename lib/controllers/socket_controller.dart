@@ -1,25 +1,32 @@
 import 'dart:convert';
-import 'package:pill_line_a_i/controllers/pill_line_controller.dart';
+import 'dart:developer';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 import 'package:pill_line_a_i/utils/socket_error_handler.dart';
-import 'package:socket_io_client/socket_io_client.dart' as IO;
+import 'package:socket_io_client/socket_io_client.dart' as io;
 import 'package:flutter/material.dart';
 
 class SocketController {
-  late IO.Socket socket;
-  final void Function(String) onMessage;
-  final void Function(bool) onConnectionStatusChanged;
-  final BuildContext context;
+  late io.Socket socket;
+
+  late void Function(String) onMessage;
+  late void Function(bool) onConnectionStatusChanged;
+  late BuildContext context;
+
   bool hasShownConnectionError = false;
 
-  SocketController({
-    required this.context,
-    required this.onMessage,
-    required this.onConnectionStatusChanged,
-  });
+  SocketController();
+  void configure({
+    required BuildContext context,
+    required void Function(String) onMessage,
+    required void Function(bool) onConnectionStatusChanged,
+  }) {
+    this.context = context;
+    this.onMessage = onMessage;
+    this.onConnectionStatusChanged = onConnectionStatusChanged;
+  }
 
   void initSocket() {
-    socket = IO.io('http://10.91.114.73:5000', <String, dynamic>{
+    socket = io.io('http://10.91.114.73:5000', <String, dynamic>{
       'transports': ['websocket'],
     });
 
@@ -29,8 +36,9 @@ class SocketController {
       hasShownConnectionError = false;
       ScaffoldMessenger.of(context).hideCurrentSnackBar();
       onConnectionStatusChanged(true);
+      log('Connected to server');
       onMessage('Connected to server');
-      sendInitMessage();
+      // sendInitMessage();
     });
 
     socket.on('disconnect', (_) {
@@ -42,22 +50,27 @@ class SocketController {
       try {
         late Map<String, dynamic> json;
 
-        // เช็คชนิดข้อมูลที่รับมา
         if (data is Map<String, dynamic>) {
           json = data;
         } else if (data is String) {
           json = jsonDecode(data);
         } else {
-          throw FormatException('Unknown data format');
+          throw const FormatException('Unknown data format');
         }
 
-        // ตรวจสอบ action == 'new'
         if (json['action'] == 'new') {
           onMessage('Fetched drugitems for VN: ${json['vn']}');
         }
 
-        // ส่งข้อมูลดิบ (หรือ json) กลับไปใน onMessage ด้วย
-        onMessage('Received valid JSON: $json');
+        if (json['action'] == 'check') {
+          onMessage('Changed status for VN: ${json['vn']} and Drug: ${json['drug']}');
+        }
+
+        if (json['action'] == 'finish') {
+          onMessage('Finished for VN: ${json['vn']}');
+        }
+
+        // onMessage('Received valid JSON: $json');
       } catch (e) {
         onMessage('Error decoding JSON: $e');
       }

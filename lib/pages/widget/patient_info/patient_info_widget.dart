@@ -3,14 +3,10 @@ import 'package:pill_line_a_i/models/ovst_pill_line_model.dart';
 import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'dart:math';
 import 'dart:ui';
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'patient_info_model.dart';
 export 'patient_info_model.dart';
 
@@ -98,8 +94,8 @@ class _PatientInfoWidgetState extends State<PatientInfoWidget> with TickerProvid
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        boxShadow: [
-          const BoxShadow(
+        boxShadow: const [
+          BoxShadow(
             blurRadius: 8.0,
             color: Color(0x19F8F9FA),
             offset: Offset(
@@ -114,39 +110,24 @@ class _PatientInfoWidgetState extends State<PatientInfoWidget> with TickerProvid
       child: ClipRRect(
         borderRadius: BorderRadius.circular(100.0),
         child: BackdropFilter(
-          filter: ImageFilter.blur(
-            sigmaX: 20.0,
-            sigmaY: 20.0,
-          ),
+          filter: ImageFilter.blur(sigmaX: 0.2, sigmaY: 0.2),
           child: Container(
             width: double.infinity,
             decoration: BoxDecoration(
-              boxShadow: [
-                const BoxShadow(
-                  blurRadius: 16.0,
-                  color: Color(0x1AF8F9FA),
-                  offset: Offset(
-                    0.0,
-                    0.0,
-                  ),
-                  spreadRadius: 8.0,
-                )
-              ],
-              borderRadius: BorderRadius.circular(100.0),
+              color: Colors.white.withOpacity(0.05),
+              borderRadius: BorderRadius.circular(32.0),
               border: Border.all(
-                color: const Color(0x4CE9ECEF),
-                width: () {
-                  if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                    return 2.0;
-                  } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                    return 2.0;
-                  } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                    return 4.0;
-                  } else {
-                    return 4.0;
-                  }
-                }(),
+                color: Colors.white.withOpacity(0.2),
+                width: 1.5,
               ),
+              boxShadow: [
+                BoxShadow(
+                  blurRadius: 24,
+                  spreadRadius: 4,
+                  offset: Offset(0, 0),
+                  color: Colors.white.withOpacity(0.1),
+                ),
+              ],
             ),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -427,51 +408,51 @@ class _PatientInfoWidgetState extends State<PatientInfoWidget> with TickerProvid
                               ),
                             ),
                           ),
-                          Container(
-                            decoration: BoxDecoration(
-                              gradient: const LinearGradient(
-                                colors: [Color(0xFF3EB7EC), Color(0xFF1188B9)],
-                                stops: [0.0, 1.0],
-                                begin: AlignmentDirectional(0.0, -1.0),
-                                end: AlignmentDirectional(0, 1.0),
-                              ),
-                              borderRadius: BorderRadius.circular(100.0),
-                              border: Border.all(
-                                color: const Color(0x7FF8F9FA),
-                                width: 1.0,
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 4.0),
-                              child: Text(
-                                valueOrDefault<String>(
-                                  'VN ${widget.ovstPillLine?.vn ?? ''}',
-                                  'VN 000000',
-                                ),
-                                style: FlutterFlowTheme.of(context).bodyLarge.override(
-                                      font: GoogleFonts.sarabun(
-                                        fontWeight: FontWeight.w500,
-                                        fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                      ),
-                                      color: FlutterFlowTheme.of(context).secondaryBackground,
-                                      fontSize: () {
-                                        if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                                          return 12.0;
-                                        } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                                          return 12.0;
-                                        } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                                          return 16.0;
-                                        } else {
-                                          return 16.0;
-                                        }
-                                      }(),
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w500,
-                                      fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
-                                    ),
-                              ),
-                            ),
-                          ),
+                          // Container(
+                          //   decoration: BoxDecoration(
+                          //     gradient: const LinearGradient(
+                          //       colors: [Color(0xFF3EB7EC), Color(0xFF1188B9)],
+                          //       stops: [0.0, 1.0],
+                          //       begin: AlignmentDirectional(0.0, -1.0),
+                          //       end: AlignmentDirectional(0, 1.0),
+                          //     ),
+                          //     borderRadius: BorderRadius.circular(100.0),
+                          //     border: Border.all(
+                          //       color: const Color(0x7FF8F9FA),
+                          //       width: 1.0,
+                          //     ),
+                          //   ),
+                          //   child: Padding(
+                          //     padding: const EdgeInsetsDirectional.fromSTEB(16.0, 4.0, 16.0, 4.0),
+                          //     child: Text(
+                          //       valueOrDefault<String>(
+                          //         'VN ${widget.ovstPillLine?.vn ?? ''}',
+                          //         'VN 000000',
+                          //       ),
+                          //       style: FlutterFlowTheme.of(context).bodyLarge.override(
+                          //             font: GoogleFonts.sarabun(
+                          //               fontWeight: FontWeight.w500,
+                          //               fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                          //             ),
+                          //             color: FlutterFlowTheme.of(context).secondaryBackground,
+                          //             fontSize: () {
+                          //               if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
+                          //                 return 12.0;
+                          //               } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
+                          //                 return 12.0;
+                          //               } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
+                          //                 return 16.0;
+                          //               } else {
+                          //                 return 16.0;
+                          //               }
+                          //             }(),
+                          //             letterSpacing: 0.0,
+                          //             fontWeight: FontWeight.w500,
+                          //             fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                          //           ),
+                          //     ),
+                          //   ),
+                          // ),
                           Container(
                             decoration: BoxDecoration(
                               gradient: const LinearGradient(

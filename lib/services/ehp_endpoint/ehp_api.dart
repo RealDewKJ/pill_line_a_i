@@ -5,13 +5,13 @@ import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/material.dart';
 
-import 'package:flutter/widgets.dart';
 import 'package:crypto/crypto.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
+// ignore: depend_on_referenced_packages
 import 'package:intl/intl.dart';
 import 'package:jwt_decode/jwt_decode.dart';
 
@@ -20,7 +20,7 @@ import 'ehp_endpoint.dart';
 import 'ehp_locator.dart';*/
 
 import 'package:encrypt/encrypt.dart' as enc;
-import 'dart:developer' as logDev;
+import 'dart:developer' as log_dev;
 
 import 'package:pill_line_a_i/services/ehp_endpoint/dio_client.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/dio_exception.dart';
@@ -156,7 +156,7 @@ class EHPApi {
 
       if (rdata.containsKey('field_name')) {
         //  debugPrint('field_name : ${rdata['field_name']}');
-        logDev.log('${rdata['field_name']}', name: 'field_name');
+        log_dev.log('${rdata['field_name']}', name: 'field_name');
       }
 
       if (rdata.containsKey('MessageCode') && rdata.containsKey('Message') && (response.data['MessageCode'] != 200)) {
@@ -207,7 +207,7 @@ class EHPApi {
 
   static Future<bool> checkAndShowResponseIsValid(dio.Response response) async {
     if (!await checkResponseIsValid(response)) {
-      _showSnackBarWithTitle('Error', '${getResponseMessage(response)}');
+      _showSnackBarWithTitle('Error', getResponseMessage(response));
       return false;
     }
     return true;
@@ -296,7 +296,7 @@ class EHPApi {
     } catch (e) {
       log('Error occurred while getting status: $e', name: 'getStatus', error: true);
 
-      if (e is dio.DioError) {
+      if (e is dio.DioException) {
         log('Dio Error details: ${e.response?.statusCode}, ${e.message}', name: 'getStatus', error: true);
       }
 
@@ -713,8 +713,8 @@ class EHPApi {
         : Endpoints.apiUserJWTPayload['client']['profile']['organization'][0]['organization_code'];
     final deviceModel = EHPMobile.deviceModel;
     // final hcode = '00000';
-    log("${Endpoints.apiUserJWT}");
-    log('${Endpoints.dataPath}?Action=GetNewHN' + '&hospital_code=' + hcode + '&computer_name=' + deviceModel);
+    log(Endpoints.apiUserJWT);
+    log('${Endpoints.dataPath}?Action=GetNewHN&hospital_code=$hcode&computer_name=$deviceModel');
     do {
       final dio.Response response = await dioClient.post('${Endpoints.dataPath}?Action=GetNewHN',
           data: {
@@ -753,7 +753,7 @@ class EHPApi {
     } while (true);
   }
 
-  Future<dynamic?> getReport({
+  Future<dynamic> getReport({
     required String reportName,
     required String param,
   }) async {
@@ -880,44 +880,44 @@ class EHPApi {
             ? EHPMobile.hospitalCode
             : Endpoints.apiUserJWTPayload['client']['profile']['organization'][0]['organization_code'];
 
-        do {
-          log('API = ${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter');
-          final dio.Response response = await dioClient.get(
-            '${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter',
-            //'https://bms1.blogdns.net:443/bmsapiv2uat/RestAPI/00000/$tableName/$idOrFilter',
-            authHeader: Endpoints.apiUserJWT,
-          );
+        // do {
+        log('API = ${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter');
+        final dio.Response response = await dioClient.get(
+          '${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter',
+          //'https://bms1.blogdns.net:443/bmsapiv2uat/RestAPI/00000/$tableName/$idOrFilter',
+          authHeader: Endpoints.apiUserJWT,
+        );
 
-          // debugPrint('getRestAPI response.data = $response.data');
-          if (await checkResponseIsValid(response)) {
-            //final List<EHPData> res = data.fromJson(response.data['result']);
-            // if (!idOrFilter.contains('?')) {
-            if (response.data['field'].toString().isNotEmpty) {
-              EHPApi.ehpFieldTypeMap[data.runtimeType.toString()] = response.data['field'];
-            }
-
-            Iterable l = response.data['result'];
-
-            if (l.isNotEmpty) {
-              logDev.log('${l.first ?? ''}', name: 'first result');
-            }
-
-            final List<EHPData> res = List<EHPData>.from(l.map((model) => data.fromJson(model)));
-
-            if (res.isNotEmpty) {
-              logDev.log('${res[0].toJson()}', name: 'first object');
-            }
-            return res;
-          } else {
-            debugPrint('showAPIErrorDialog from getRestAPI');
-            await showAPIErrorDialog(response);
+        // debugPrint('getRestAPI response.data = $response.data');
+        if (await checkResponseIsValid(response)) {
+          //final List<EHPData> res = data.fromJson(response.data['result']);
+          // if (!idOrFilter.contains('?')) {
+          if (response.data['field'].toString().isNotEmpty) {
+            EHPApi.ehpFieldTypeMap[data.runtimeType.toString()] = response.data['field'];
           }
-        } while (true);
+
+          Iterable l = response.data['result'];
+
+          if (l.isNotEmpty) {
+            log_dev.log('${l.first ?? ''}', name: 'first result');
+          }
+
+          final List<EHPData> res = List<EHPData>.from(l.map((model) => data.fromJson(model)));
+
+          if (res.isNotEmpty) {
+            log_dev.log('${res[0].toJson()}', name: 'first object');
+          }
+          return res;
+        } else {
+          debugPrint('showAPIErrorDialog from getRestAPI');
+          await showAPIErrorDialog(response);
+        }
+        // } while (true);
 
         // return null;
       } on DioExceptions catch (e) {
         log('e.message DioExceptions >>> ${e.message}');
-        log('e.message DioExceptions >>> ${e}');
+        log('e.message DioExceptions >>> $e');
         hasError = true;
       } catch (e) {
         debugPrint('error $e');
@@ -1274,7 +1274,7 @@ class EHPApi {
 
           log('getRestAPIDataCountWithPath:${Endpoints.restAPIPath}/$hcode/$tableName');
 
-          log('getRestAPIDataCountWithPath' + response.toString());
+          log('getRestAPIDataCountWithPath$response');
 
           if (await checkResponseIsValid(response)) {
             //final List<EHPData> res = data.fromJson(response.data['result']);
@@ -1317,42 +1317,40 @@ class EHPApi {
         log('start postRestAPIData : ${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter');
         log('post payload for data ${data.runtimeType.toString()} : ${data.toJson()}');
 
-        //  logDev.log('EHPApi.ehpFieldTypeMap ${data.runtimeType.toString()} = ${EHPApi.ehpFieldTypeMap[data.runtimeType.toString()]} count = ${((EHPApi.ehpFieldTypeMap[data.runtimeType.toString()] as List?) ?? []).length}', name: 'post_field');
-        //  logDev.log('${data.toJson()} count = ${data.toJson().length}', name: 'post_data');
+        //  log_dev.log('EHPApi.ehpFieldTypeMap ${data.runtimeType.toString()} = ${EHPApi.ehpFieldTypeMap[data.runtimeType.toString()]} count = ${((EHPApi.ehpFieldTypeMap[data.runtimeType.toString()] as List?) ?? []).length}', name: 'post_field');
+        //  log_dev.log('${data.toJson()} count = ${data.toJson().length}', name: 'post_data');
 
-        do {
-          final dio.Response response = await dioClient.post(
-            '${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter',
-            data: {
-              'data': [data.toJson()],
-              'update_field': data.getFieldNameForUpdate(),
-              'field': data
-                  .getFieldTypeForUpdate() /* data.getFieldTypeForUpdate().isNotEmpty
+        final dio.Response response = await dioClient.post(
+          '${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter',
+          data: {
+            'data': [data.toJson()],
+            'update_field': data.getFieldNameForUpdate(),
+            'field': data
+                .getFieldTypeForUpdate() /* data.getFieldTypeForUpdate().isNotEmpty
                 ? data.getFieldTypeForUpdate()
                 : EHPApi.ehpFieldTypeMap[data.runtimeType.toString()]*/
-            },
-            authHeader: Endpoints.apiUserJWT,
-          );
+          },
+          authHeader: Endpoints.apiUserJWT,
+        );
 
-          // debugPrint('postRestAPIData response.data = $response.data');
-          logDev.log('statusCode.');
-          logDev.log(response.statusCode.toString());
+        // debugPrint('postRestAPIData response.data = $response.data');
+        log_dev.log('statusCode.');
+        log_dev.log(response.statusCode.toString());
 
-          if (await checkResponseIsValid(response)) {
-            if (response.data['field'].toString().isNotEmpty) {
-              EHPApi.ehpFieldTypeMap[data.runtimeType.toString()] = response.data['field'];
+        if (await checkResponseIsValid(response)) {
+          if (response.data['field'].toString().isNotEmpty) {
+            EHPApi.ehpFieldTypeMap[data.runtimeType.toString()] = response.data['field'];
 
-              // debugPrint('ehpFieldTypeMap = ${EHPApi.ehpFieldTypeMap}');
-            }
-
-            return true;
-          } else {
-            debugPrint('showAPIErrorDialog from postRestAPIData');
-            await showAPIErrorDialog(response);
+            // debugPrint('ehpFieldTypeMap = ${EHPApi.ehpFieldTypeMap}');
           }
-        } while (true);
 
-        // return null;
+          return true;
+        } else {
+          debugPrint('showAPIErrorDialog from postRestAPIData');
+          await showAPIErrorDialog(response);
+        }
+
+        return false;
       } catch (e) {
         //rethrow;
         debugPrint('error $e');
@@ -1383,10 +1381,10 @@ class EHPApi {
         // log('start postRestAPIData : ${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter');
         // log('post payload for data ${data.runtimeType.toString()} : ${data.toJson()}');
 
-        logDev.log(
+        log_dev.log(
             'EHPApi.ehpFieldTypeMap ${data.runtimeType.toString()} = ${EHPApi.ehpFieldTypeMap[data.runtimeType.toString()]} count = ${((EHPApi.ehpFieldTypeMap[data.runtimeType.toString()] as List?) ?? []).length}',
             name: 'post_field');
-        logDev.log('${data[0].toJson()} count = ${data[0].toJson().length}', name: 'post_data');
+        log_dev.log('${data[0].toJson()} count = ${data[0].toJson().length}', name: 'post_data');
 
         final dataList = [];
 
@@ -1409,8 +1407,8 @@ class EHPApi {
           );
 
           // debugPrint('postRestAPIData response.data = $response.data');
-          logDev.log('statusCode.');
-          logDev.log(response.statusCode.toString());
+          log_dev.log('statusCode.');
+          log_dev.log(response.statusCode.toString());
 
           if (await checkResponseIsValid(response)) {
             if (response.data['field'].toString().isNotEmpty) {
@@ -1997,16 +1995,6 @@ String stripMargin(String s) {
   );
 }
 
-void _showSnackBar(String message) {
-  Get.snackbar('Invalid API Response', message,
-      colorText: Colors.white,
-      backgroundColor: Colors.redAccent.shade700,
-      icon: const Icon(
-        Icons.error_sharp,
-        color: Colors.yellow,
-      ));
-}
-
 void _showSnackBarWithTitle(String title, String message) {
   Get.snackbar(title, message,
       colorText: Colors.white,
@@ -2041,5 +2029,5 @@ DateTime? tryParseBuddistDateDDMMYYYY(String inDate) {
 }
 
 void logFull(String logData) {
-  logDev.log(logData);
+  log_dev.log(logData);
 }

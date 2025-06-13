@@ -81,6 +81,7 @@ dependencies:
   flutter_exit_app: ^1.1.4
   buddhist_datetime_dateformat_sns: ^1.0.7
   socket_io_client: ^3.1.2
+  crypto: ^3.0.6
 
 dependency_overrides:
   intl: ^0.18.1

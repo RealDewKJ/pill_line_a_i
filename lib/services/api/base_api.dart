@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/material.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
 import 'package:pill_line_a_i/pages/widget/alert_dialog_warning/alert_dialog_warning_widget.dart';
@@ -201,9 +202,7 @@ class CallApiController {
             log('itemHospital: $itemHospital');
             log('prefs hopital_index: ${prefs.getString('hopital_index')}');
 
-            if (itemHospital == null) {
-              return false;
-            }
+            return false;
           } else {
             itemHospital = organizationList[0];
           }
@@ -282,6 +281,7 @@ class CallApiController {
         }
 
         log('Endpoints.apiSessionToken: ${Endpoints.apiSessionToken}');
+
         try {
           debugPrint('Action=USER...');
           DioClient dioClient = DioClient(dio.Dio());

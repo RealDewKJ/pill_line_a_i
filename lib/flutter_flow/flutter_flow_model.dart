@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:provider/provider.dart';
-import 'flutter_flow_util.dart';
 
 Widget wrapWithModel<T extends FlutterFlowModel>({
   required T model,
@@ -51,8 +50,9 @@ abstract class FlutterFlowModel<W extends Widget> {
   // The widget associated with this model. This is useful for accessing the
   // parameters of the widget, for example.
   W? _widget;
+  // ignore: unnecessary_getters_setters
   W? get widget => _widget;
-  void set widget(W? newWidget) {
+  set widget(W? newWidget) {
     _widget = newWidget;
   }
 
@@ -120,8 +120,7 @@ class FlutterFlowDynamicModels<T extends FlutterFlowModel> {
   }
 
   S? getValueAtIndex<S>(int index, S? Function(T) getValue) {
-    final uniqueKey =
-        _childrenIndexes.entries.firstWhereOrNull((e) => e.value == index)?.key;
+    final uniqueKey = _childrenIndexes.entries.firstWhereOrNull((e) => e.value == index)?.key;
     return getValueForKey(uniqueKey, getValue);
   }
 
@@ -130,6 +129,7 @@ class FlutterFlowDynamicModels<T extends FlutterFlowModel> {
     return model != null ? getValue(model) : null;
   }
 
+  // ignore: avoid_function_literals_in_foreach_calls
   void dispose() => _childrenModels.values.forEach((model) => model.dispose());
 
   void _updateActiveKeys(String uniqueKey) {
@@ -157,13 +157,13 @@ class FlutterFlowDynamicModels<T extends FlutterFlowModel> {
 
 T? _getDefaultValue<T>() {
   switch (T) {
-    case int:
+    case const (int):
       return 0 as T;
-    case double:
+    case const (double):
       return 0.0 as T;
-    case String:
+    case const (String):
       return '' as T;
-    case bool:
+    case const (bool):
       return false as T;
     default:
       return null as T;
@@ -171,6 +171,5 @@ T? _getDefaultValue<T>() {
 }
 
 extension TextValidationExtensions on String? Function(BuildContext, String?)? {
-  String? Function(String?)? asValidator(BuildContext context) =>
-      this != null ? (val) => this!(context, val) : null;
+  String? Function(String?)? asValidator(BuildContext context) => this != null ? (val) => this!(context, val) : null;
 }

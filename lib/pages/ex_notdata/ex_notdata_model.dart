@@ -1,14 +1,9 @@
-import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/pages/widget/app_bar/app_bar_widget.dart';
 import '/pages/widget/no_data/no_data_widget.dart';
-import 'dart:ui';
 import '/index.dart';
 import 'ex_notdata_widget.dart' show ExNotdataWidget;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class ExNotdataModel extends FlutterFlowModel<ExNotdataWidget> {
   ///  State fields for stateful widgets in this page.

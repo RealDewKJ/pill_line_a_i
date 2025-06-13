@@ -3,13 +3,10 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/pages/widget/button_cancel/button_cancel_widget.dart';
 import '/pages/widget/button_primary/button_primary_widget.dart';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'alert_dialog_warning_model.dart';
 export 'alert_dialog_warning_model.dart';
 
@@ -53,7 +50,7 @@ class _AlertDialogWarningWidgetState extends State<AlertDialogWarningWidget> wit
             delay: 0.0.ms,
             duration: 600.0.ms,
             hz: 10,
-            offset: Offset(-1.0, 0.0),
+            offset: const Offset(-1.0, 0.0),
             rotation: 0.087,
           ),
         ],
@@ -92,10 +89,10 @@ class _AlertDialogWarningWidgetState extends State<AlertDialogWarningWidget> wit
             }
           }(),
           decoration: BoxDecoration(
-            color: Color(0xE5FFFFFF),
+            color: const Color(0xE5FFFFFF),
             borderRadius: BorderRadius.circular(24.0),
             border: Border.all(
-              color: Color(0xB2F1F4F8),
+              color: const Color(0xB2F1F4F8),
             ),
           ),
           child: Column(
@@ -177,9 +174,9 @@ class _AlertDialogWarningWidgetState extends State<AlertDialogWarningWidget> wit
                                 lineHeight: 1.8,
                               ),
                         ),
-                      ].divide(SizedBox(height: 8.0)),
+                      ].divide(const SizedBox(height: 8.0)),
                     ),
-                  ].divide(SizedBox(height: 24.0)),
+                  ].divide(const SizedBox(height: 24.0)),
                 ),
               ),
               Divider(
@@ -210,19 +207,28 @@ class _AlertDialogWarningWidgetState extends State<AlertDialogWarningWidget> wit
                       child: wrapWithModel(
                         model: _model.buttonCancelModel,
                         updateCallback: () => safeSetState(() {}),
-                        child: ButtonCancelWidget(),
+                        child: InkWell(
+                            onTap: () async {
+                              Navigator.pop(context, false);
+                            },
+                            child: const ButtonCancelWidget()),
                       ),
                     ),
                     Expanded(
                       child: wrapWithModel(
                         model: _model.buttonPrimaryModel,
                         updateCallback: () => safeSetState(() {}),
-                        child: ButtonPrimaryWidget(
-                          text: 'ยืนยัน',
+                        child: InkWell(
+                          onTap: () async {
+                            Navigator.pop(context, true);
+                          },
+                          child: const ButtonPrimaryWidget(
+                            text: 'ยืนยัน',
+                          ),
                         ),
                       ),
                     ),
-                  ].divide(SizedBox(width: 12.0)),
+                  ].divide(const SizedBox(width: 12.0)),
                 ),
               ),
             ],
