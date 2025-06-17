@@ -28,9 +28,13 @@ class Endpoints {
   static String baseUrl = "https://wg3.bmscloud.in.th/99999/phapi"; //*Prod
   // static String baseDomain = "https://uat.deverloper.bmscloud.in.th"; //*Dev
   // static String baseUrl = "https://uat.deverloper.bmscloud.in.th/99999/phapi"; //*Dev
+  // static String baseDomain = "http://10.91.114.73:8001/99999/phapi"; //*Dev
+  // static String baseUrl = "http://10.91.114.73:8001/99999/phapi"; //*Dev
   static String lineAPIUrl = "https://notify-api.line.me/api/notify";
+
   static String dbType = '';
-  static String pdfGateWay = '';
+  static bool isEHPConnect = false;
+
   // receiveTimeout
   static const int receiveTimeout = 60000;
 

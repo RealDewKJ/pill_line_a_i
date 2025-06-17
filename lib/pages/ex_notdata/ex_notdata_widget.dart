@@ -1,8 +1,10 @@
 import 'dart:developer';
+import 'dart:typed_data';
 
 import 'package:pill_line_a_i/controllers/pill_line_controller.dart';
 import 'package:pill_line_a_i/controllers/socket_controller.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
+import 'package:pill_line_a_i/pages/widget/video_stream_dialog.dart';
 
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -23,16 +25,29 @@ class ExNotdataWidget extends StatefulWidget {
   State<ExNotdataWidget> createState() => _ExNotdataWidgetState();
 }
 
-class _ExNotdataWidgetState extends State<ExNotdataWidget> {
+class _ExNotdataWidgetState extends State<ExNotdataWidget> with SingleTickerProviderStateMixin {
   late ExNotdataModel _model;
   final socketController = serviceLocator<SocketController>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
   final pillLineController = serviceLocator<PillLineController>();
+  bool showVideoDialog = false;
+  late VideoFrameController videoFrameController;
+  late AnimationController animationController;
+
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => ExNotdataModel());
-    log('configure socket');
+
+    animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    videoFrameController = VideoFrameController(
+      animationController: animationController,
+    );
+
     socketController.configure(
       context: context,
       onMessage: (msg) {
@@ -45,18 +60,25 @@ class _ExNotdataWidgetState extends State<ExNotdataWidget> {
       },
     );
 
-    // socketController.initSocket();
+    // Show video dialog when socket is connected
+    socketController.videoFrameStream.listen((_) {
+      if (!showVideoDialog) {
+        setState(() {
+          showVideoDialog = true;
+        });
+      }
+    });
+
     WidgetsBinding.instance.addPostFrameCallback((_) => safeSetState(() {}));
   }
 
   @override
   void dispose() {
     _model.dispose();
-    // socketController.dispose();
+    animationController.dispose();
+    videoFrameController.dispose();
     super.dispose();
   }
-  // @override
-  // void did
 
   handleFetchedDrugitemsMessage(msg) async {
     const prefix = 'Fetched drugitems for VN:';
@@ -88,108 +110,146 @@ class _ExNotdataWidgetState extends State<ExNotdataWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-        FocusManager.instance.primaryFocus?.unfocus();
-      },
-      child: Scaffold(
-        key: scaffoldKey,
-        backgroundColor: FlutterFlowTheme.of(context).primary,
-        body: Column(
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(
-                  0.0,
-                  valueOrDefault<double>(
-                    () {
-                      if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                        return 48.0;
-                      } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                        return 48.0;
-                      } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                        return 0.0;
-                      } else {
-                        return 0.0;
-                      }
-                    }(),
-                    0.0,
-                  ),
-                  0.0,
-                  0.0),
-              child: wrapWithModel(
-                model: _model.appBarModel,
-                updateCallback: () => safeSetState(() {}),
-                child: const AppBarWidget(
-                  patientinfo: false,
-                  nodata: true,
-                ),
-              ),
-            ),
-            Expanded(
-              child: Container(
-                width: double.infinity,
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [const Color(0x00F8F9FA), const Color(0xE6F8F9FA), FlutterFlowTheme.of(context).primaryBackground],
-                    stops: const [0.0, 0.15, 0.2],
-                    begin: const AlignmentDirectional(0.0, -1.0),
-                    end: const AlignmentDirectional(0, 1.0),
-                  ),
-                ),
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(
-                      valueOrDefault<double>(
-                        () {
-                          if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                            return 12.0;
-                          } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                            return 12.0;
-                          } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                            return 16.0;
-                          } else {
-                            return 16.0;
-                          }
-                        }(),
-                        0.0,
-                      ),
-                      0.0,
-                      valueOrDefault<double>(
-                        () {
-                          if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
-                            return 12.0;
-                          } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
-                            return 12.0;
-                          } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
-                            return 16.0;
-                          } else {
-                            return 16.0;
-                          }
-                        }(),
-                        0.0,
-                      ),
-                      0.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      Expanded(
-                        child: Align(
-                          alignment: const AlignmentDirectional(0.0, 0.0),
-                          child: wrapWithModel(
-                            model: _model.noDataModel,
-                            updateCallback: () => safeSetState(() {}),
-                            child: const NoDataWidget(),
+    final videoWidth = 480.0;
+    final videoHeight = videoWidth * 9 / 16;
+
+    return Scaffold(
+      key: scaffoldKey,
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(150),
+        child: AppBarWidget(
+          nodata: true,
+        ),
+      ),
+      body: Stack(
+        children: [
+          // No Data Widget (Full Width)
+          const Center(
+            child: NoDataWidget(),
+          ),
+
+          // Draggable Video Stream
+          if (showVideoDialog)
+            ValueListenableBuilder<double>(
+              valueListenable: videoFrameController.leftPosition,
+              builder: (context, left, _) {
+                return ValueListenableBuilder<double>(
+                  valueListenable: videoFrameController.bottomPosition,
+                  builder: (context, bottom, _) {
+                    return Positioned(
+                      left: left,
+                      bottom: bottom,
+                      child: GestureDetector(
+                        onPanUpdate: (details) {
+                          videoFrameController.leftPosition.value += details.delta.dx;
+                          videoFrameController.bottomPosition.value -= details.delta.dy;
+                        },
+                        onPanEnd: (details) {
+                          videoFrameController.handlePositionBounds(context);
+                        },
+                        child: Container(
+                          width: videoWidth,
+                          height: videoHeight,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(20),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.2),
+                                blurRadius: 20,
+                                spreadRadius: 5,
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(20),
+                            child: Stack(
+                              children: [
+                                StreamBuilder<Uint8List>(
+                                  stream: socketController.videoFrameStream,
+                                  builder: (context, snapshot) {
+                                    if (snapshot.hasData) {
+                                      return Image.memory(
+                                        snapshot.data!,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        height: double.infinity,
+                                        gaplessPlayback: true,
+                                      );
+                                    }
+                                    return Center(
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          const CircularProgressIndicator(
+                                            color: Colors.white,
+                                            strokeWidth: 2,
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            'Connecting to stream...',
+                                            style: TextStyle(
+                                              color: Colors.white.withOpacity(0.8),
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    );
+                                  },
+                                ),
+                                // Close button
+                                Positioned(
+                                  top: 8,
+                                  right: 8,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.5),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: IconButton(
+                                      icon: const Icon(
+                                        Icons.close,
+                                        color: Colors.white,
+                                        size: 20,
+                                      ),
+                                      onPressed: () {
+                                        setState(() {
+                                          showVideoDialog = false;
+                                        });
+                                      },
+                                      padding: const EdgeInsets.all(8),
+                                      constraints: const BoxConstraints(),
+                                    ),
+                                  ),
+                                ),
+                                // Drag handle
+                                Positioned(
+                                  top: 8,
+                                  left: 8,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.5),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.drag_indicator,
+                                      color: Colors.white,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
-                    ].divide(const SizedBox(height: 12.0)),
-                  ),
-                ),
-              ),
+                    );
+                  },
+                );
+              },
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

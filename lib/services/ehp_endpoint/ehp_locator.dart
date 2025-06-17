@@ -22,7 +22,7 @@ void setUpServiceLocator() {
   serviceLocator.registerSingleton<SocketErrorHandler>(SocketErrorHandler());
   serviceLocator.registerLazySingleton<SocketController>(() {
     final controller = SocketController();
-    controller.initSocket(); // เรียก initSocket ที่นี่เลย
+    controller.initSocket(); 
     return controller;
   });
   serviceLocator.registerLazySingleton(() => PillLineController());

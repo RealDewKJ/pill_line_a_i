@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:pill_line_a_i/pages/not_found/not_found_widget.dart';
+import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
 import 'package:provider/provider.dart';
 
 import '/flutter_flow/flutter_flow_util.dart';
@@ -33,8 +35,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
-      errorBuilder: (context, state) => const ExNotdataWidget(),
+      errorBuilder: (context, state) => const NotFoundWidget(),
+      redirect: (context, state) {
+      // เช็คว่าต่อ API ไม่ได้
+        if (!Endpoints.isEHPConnect) {
+          return NotFoundWidget.routePath;
+        }
+          return null;
+      },
       routes: [
+        
         FFRoute(
           name: '_initialize',
           path: '/',

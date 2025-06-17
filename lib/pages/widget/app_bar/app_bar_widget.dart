@@ -239,7 +239,7 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                       ),
                     ),
                     Text(
-                      'Pill Line AI',
+                      'Odin Check',
                       style: FlutterFlowTheme.of(context).headlineSmall.override(
                         font: GoogleFonts.sarabun(
                           fontWeight: FlutterFlowTheme.of(context).headlineSmall.fontWeight,
@@ -271,28 +271,30 @@ class _AppBarWidgetState extends State<AppBarWidget> {
                     ),
                   ].divide(const SizedBox(width: 12.0)),
                 ),
-                Stack(
-                  children: [
-                    widget.nodata == true
-                        ? wrapWithModel(
-                            model: _model.patientInfoNodataModel,
-                            updateCallback: () => safeSetState(() {}),
-                            child: const PatientInfoNodataWidget(),
-                          )
-                        : widget.patientinfo == false
-                            ? wrapWithModel(
-                                model: _model.patientInfoNodataModel,
-                                updateCallback: () => safeSetState(() {}),
-                                child: const PatientInfoLoadingdataWidget(),
-                              )
-                            : wrapWithModel(
-                                model: _model.patientInfoModel,
-                                updateCallback: () => safeSetState(() {}),
-                                child: PatientInfoWidget(
-                                  ovstPillLine: widget.ovstPillLine,
+                Expanded(
+                  child: Stack(
+                    children: [
+                      widget.nodata == true
+                          ? wrapWithModel(
+                              model: _model.patientInfoNodataModel,
+                              updateCallback: () => safeSetState(() {}),
+                              child: const PatientInfoNodataWidget(),
+                            )
+                          : widget.patientinfo == false
+                              ? wrapWithModel(
+                                  model: _model.patientInfoNodataModel,
+                                  updateCallback: () => safeSetState(() {}),
+                                  child: const PatientInfoLoadingdataWidget(),
+                                )
+                              : wrapWithModel(
+                                  model: _model.patientInfoModel,
+                                  updateCallback: () => safeSetState(() {}),
+                                  child: PatientInfoWidget(
+                                    ovstPillLine: widget.ovstPillLine,
+                                  ),
                                 ),
-                              ),
-                  ],
+                    ],
+                  ),
                 ),
               ],
             ),

@@ -325,7 +325,7 @@ class EHPApi {
           },
           authHeader: '',
         );
-
+        log('getAPIJWT() response = ${response.data}');
         if (await checkResponseIsValid(response)) {
           Endpoints.apiJWT = response.data['result'].toString();
 
@@ -337,6 +337,7 @@ class EHPApi {
         debugPrint('Error response');
       }
     } catch (e) {
+      log('getAPIJWT() error = $e', name: 'getAPIJWT', error: true);
       // rethrow;
     }
     return response;

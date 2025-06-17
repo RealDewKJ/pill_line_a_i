@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:pill_line_a_i/models/ehp_pill_conveyor_model.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';

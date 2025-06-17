@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
+import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
@@ -12,8 +13,10 @@ void main() async {
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
   setUpServiceLocator();
-  await EHPApi.initializeEHPToken();
-  await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
+  Endpoints.isEHPConnect = await EHPApi.initializeEHPToken();
+  if (Endpoints.isEHPConnect) {
+    await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
+  }
   Intl.defaultLocale = "th";
   runApp(const MyApp());
 }
