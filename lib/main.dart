@@ -1,22 +1,27 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
-import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
-import 'flutter_flow/flutter_flow_util.dart';
+import 'package:pill_line_a_i/flutter_flow/flutter_flow_util.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
-  setUpServiceLocator();
+
+  // Setup all dependencies
+  setupServiceLocator();
+
+  // Initialize EHP
   Endpoints.isEHPConnect = await EHPApi.initializeEHPToken();
   if (Endpoints.isEHPConnect) {
-    await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
+    await getIt<EHPApi>().getUserJWT('0000000000001', 'admin');
   }
+
   Intl.defaultLocale = "th";
   runApp(const MyApp());
 }
@@ -24,11 +29,9 @@ void main() async {
 class MyApp extends StatefulWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   State<MyApp> createState() => _MyAppState();
 
-  // ignore: library_private_types_in_public_api
   static _MyAppState of(BuildContext context) => context.findAncestorStateOfType<_MyAppState>()!;
 }
 
@@ -42,9 +45,9 @@ class MyAppScrollBehavior extends MaterialScrollBehavior {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
-
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
+
   String getRoute([RouteMatch? routeMatch]) {
     final RouteMatch lastMatch = routeMatch ?? _router.routerDelegate.currentConfiguration.last;
     final RouteMatchList matchList = lastMatch is ImperativeRouteMatch ? lastMatch.matches : _router.routerDelegate.currentConfiguration;
@@ -56,7 +59,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
   }

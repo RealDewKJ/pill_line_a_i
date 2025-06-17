@@ -1,7 +1,17 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:pill_line_a_i/pages/not_found/not_found_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:pill_line_a_i/core/di/service_locator.dart';
+import 'package:pill_line_a_i/features/ex_notdata/presentation/bloc/ex_notdata_bloc.dart';
+import 'package:pill_line_a_i/features/home/presentation/bloc/home_bloc.dart';
+import 'package:pill_line_a_i/features/not_found/presentation/bloc/not_found_bloc.dart';
+import 'package:pill_line_a_i/features/ex_notdata/presentation/pages/ex_notdata_page.dart';
+import 'package:pill_line_a_i/features/home/presentation/pages/home_page.dart';
+import 'package:pill_line_a_i/features/not_found/presentation/pages/not_found_page.dart';
+import 'package:pill_line_a_i/flutter_flow/flutter_flow_theme.dart';
+import 'package:pill_line_a_i/flutter_flow/flutter_flow_util.dart';
+import 'package:pill_line_a_i/pages/widget/video_stream_dialog.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
 import 'package:provider/provider.dart';
 
@@ -35,31 +45,41 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
-      errorBuilder: (context, state) => const NotFoundWidget(),
+      errorBuilder: (context, state) => BlocProvider(
+        create: (context) => getIt<NotFoundBloc>(),
+        child: const NotFoundPage(),
+      ),
       redirect: (context, state) {
-      // เช็คว่าต่อ API ไม่ได้
         if (!Endpoints.isEHPConnect) {
-          return NotFoundWidget.routePath;
+          return NotFoundPage.routePath;
         }
-          return null;
+        return null;
       },
       routes: [
-        
         FFRoute(
           name: '_initialize',
           path: '/',
-          builder: (context, _) => const ExNotdataWidget(),
+          builder: (context, _) => BlocProvider(
+            create: (context) => getIt<ExNotDataBloc>(),
+            child: const ExNotDataPage(),
+          ),
         ),
         FFRoute(
-          name: HomePageWidget.routeName,
-          path: HomePageWidget.routePath,
-          builder: (context, params) => const HomePageWidget(),
+          name: HomePage.routeName,
+          path: HomePage.routePath,
+          builder: (context, params) => BlocProvider(
+            create: (context) => getIt<HomeBloc>()..add(LoadHomeData()),
+            child: const HomePage(),
+          ),
         ),
         FFRoute(
-          name: ExNotdataWidget.routeName,
-          path: ExNotdataWidget.routePath,
-          builder: (context, params) => const ExNotdataWidget(),
-        )
+          name: ExNotDataPage.routeName,
+          path: ExNotDataPage.routePath,
+          builder: (context, params) => BlocProvider(
+            create: (context) => getIt<ExNotDataBloc>(),
+            child: const ExNotDataPage(),
+          ),
+        ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 
@@ -237,5 +257,81 @@ extension GoRouterLocationExtension on GoRouter {
     final RouteMatch lastMatch = routerDelegate.currentConfiguration.last;
     final RouteMatchList matchList = lastMatch is ImperativeRouteMatch ? lastMatch.matches : routerDelegate.currentConfiguration;
     return matchList.uri.toString();
+  }
+}
+
+class Nav {
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
+  static Route<dynamic> generateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => getIt<ExNotDataBloc>(),
+            child: const ExNotDataPage(),
+          ),
+        );
+      case '/home':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => getIt<HomeBloc>()..add(LoadHomeData()),
+            child: const HomePage(),
+          ),
+        );
+      case '/notFound':
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => getIt<NotFoundBloc>(),
+            child: const NotFoundPage(),
+          ),
+        );
+      default:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => getIt<NotFoundBloc>(),
+            child: const NotFoundPage(),
+          ),
+        );
+    }
+  }
+
+  static void navigateToHome(BuildContext context) {
+    context.pushNamed(
+      'home',
+      extra: <String, dynamic>{
+        kTransitionInfoKey: const TransitionInfo(
+          hasTransition: true,
+          transitionType: PageTransitionType.fade,
+          duration: Duration(milliseconds: 0),
+        ),
+      },
+    );
+  }
+
+  static void navigateToExNotData(BuildContext context) {
+    context.pushNamed(
+      'exNotdata',
+      extra: <String, dynamic>{
+        kTransitionInfoKey: const TransitionInfo(
+          hasTransition: true,
+          transitionType: PageTransitionType.fade,
+          duration: Duration(milliseconds: 0),
+        ),
+      },
+    );
+  }
+
+  static void navigateToNotFound(BuildContext context) {
+    context.pushNamed(
+      'notFound',
+      extra: <String, dynamic>{
+        kTransitionInfoKey: const TransitionInfo(
+          hasTransition: true,
+          transitionType: PageTransitionType.fade,
+          duration: Duration(milliseconds: 0),
+        ),
+      },
+    );
   }
 }

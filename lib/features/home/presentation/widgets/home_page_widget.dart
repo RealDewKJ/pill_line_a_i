@@ -5,9 +5,10 @@ import 'package:flutter/services.dart';
 import 'package:pill_line_a_i/controllers/endpoint_controllers/ehp_pill_conveyor_controller.dart';
 import 'package:pill_line_a_i/controllers/pill_line_controller.dart';
 import 'package:pill_line_a_i/controllers/socket_controller.dart';
+import 'package:pill_line_a_i/features/ex_notdata/presentation/widgets/ex_notdata_widget.dart';
+import 'package:pill_line_a_i/features/home/presentation/widgets/home_page_model.dart';
 import 'package:pill_line_a_i/models/ehp_pill_conveyor_model.dart';
 import 'package:pill_line_a_i/models/ovst_pill_line_model.dart';
-import 'package:pill_line_a_i/pages/ex_notdata/ex_notdata_widget.dart';
 import 'package:pill_line_a_i/pages/widget/alert_dialog_error/alert_dialog_error_widget.dart';
 import 'package:pill_line_a_i/pages/widget/alert_dialog_not_drug_in_list/alert_dialog_not_drug_in_list_widget.dart';
 import 'package:pill_line_a_i/pages/widget/alert_dialog_success/alert_dialog_success_widget.dart';
@@ -21,13 +22,11 @@ import '/pages/widget/app_bar/app_bar_widget.dart';
 import '/pages/widget/item_drug/item_drug_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'home_page_model.dart';
-export 'home_page_model.dart';
 
 class HomePageWidget extends StatefulWidget {
   const HomePageWidget({super.key});
 
-  static String routeName = 'HomePage'; 
+  static String routeName = 'HomePage';
   static String routePath = '/homePage';
 
   @override
@@ -55,8 +54,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           handleChangedStatusMessage(msg);
         }
         if (msg.contains('Finished for VN:')) {
-          handleFinishedMessage(msg); 
-          
+          handleFinishedMessage(msg);
         }
       },
       onConnectionStatusChanged: (status) {
@@ -181,7 +179,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       Future.delayed(const Duration(seconds: 5)).then((_) {
         context.pop();
         Navigator.of(context).popUntil((route) => route.isFirst);
-        context.push(ExNotdataWidget.routePath);
+        context.push(ExNotDataWidget.routePath);
       });
 
       final result = await GlobalWidget.showModalMethod(
@@ -192,7 +190,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       if (result == true && !navigated && mounted) {
         navigated = true;
         Navigator.of(context).popUntil((route) => route.isFirst);
-        context.push(ExNotdataWidget.routePath);
+        context.push(ExNotDataWidget.routePath);
       }
     } else {
       final missingDrugNames = notFoundPills.map((pill) => '• ${pill.drugName}').join('\n');
@@ -204,7 +202,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
       if (result) {
         Navigator.of(context).popUntil((route) => route.isFirst);
-        context.push(ExNotdataWidget.routePath);
+        context.push(ExNotDataWidget.routePath);
       }
     }
   }

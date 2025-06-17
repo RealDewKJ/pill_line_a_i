@@ -5,6 +5,8 @@ import 'dart:typed_data';
 import 'package:flutter/gestures.dart';
 import 'package:pill_line_a_i/controllers/pill_line_controller.dart';
 import 'package:pill_line_a_i/controllers/socket_controller.dart';
+import 'package:pill_line_a_i/features/ex_notdata/presentation/widgets/ex_notdata_model.dart';
+import 'package:pill_line_a_i/features/home/presentation/widgets/home_page_widget.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 import 'package:pill_line_a_i/pages/widget/video_stream_dialog.dart';
 
@@ -14,20 +16,18 @@ import '/pages/widget/app_bar/app_bar_widget.dart';
 import '/pages/widget/no_data/no_data_widget.dart';
 import '/index.dart';
 import 'package:flutter/material.dart';
-import 'ex_notdata_model.dart';
-export 'ex_notdata_model.dart';
 
-class ExNotdataWidget extends StatefulWidget {
-  const ExNotdataWidget({super.key});
+class ExNotDataWidget extends StatefulWidget {
+  const ExNotDataWidget({super.key});
 
   static String routeName = 'Ex_notdata';
   static String routePath = '/exNotdata';
 
   @override
-  State<ExNotdataWidget> createState() => _ExNotdataWidgetState();
+  State<ExNotDataWidget> createState() => _ExNotDataWidgetState();
 }
 
-class _ExNotdataWidgetState extends State<ExNotdataWidget> with SingleTickerProviderStateMixin {
+class _ExNotDataWidgetState extends State<ExNotDataWidget> with SingleTickerProviderStateMixin {
   late ExNotdataModel _model;
   final socketController = serviceLocator<SocketController>();
   final scaffoldKey = GlobalKey<ScaffoldState>();
