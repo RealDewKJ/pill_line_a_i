@@ -21,10 +21,14 @@ class VideoFrameController {
     final containerWidth = 480.0;
     final containerHeight = containerWidth * 9 / 16;
 
+    final appBarHeight = 170.0;
+    final minTopPosition = appBarHeight + 10;
+
     double targetLeft = leftPosition.value;
     double targetBottom = bottomPosition.value;
     bool needsAnimation = false;
 
+    // ตรวจสอบขอบเขตด้านซ้าย-ขวา
     if (leftPosition.value < 0) {
       targetLeft = 10;
       needsAnimation = true;
@@ -33,11 +37,13 @@ class VideoFrameController {
       needsAnimation = true;
     }
 
-    if (bottomPosition.value < 0) {
-      targetBottom = 10;
+    final currentTopPosition = screenHeight - bottomPosition.value - containerHeight;
+
+    if (currentTopPosition < minTopPosition) {
+      targetBottom = screenHeight - minTopPosition - containerHeight;
       needsAnimation = true;
-    } else if (bottomPosition.value + containerHeight > screenHeight) {
-      targetBottom = screenHeight - containerHeight - 10;
+    } else if (bottomPosition.value < 0) {
+      targetBottom = 10;
       needsAnimation = true;
     }
 
@@ -79,101 +85,109 @@ class VideoFrameController {
 }
 
 class SocketController {
-  WebSocket? socket;
-  bool isConnected = false;
-  final _videoFrameController = StreamController<Uint8List>.broadcast();
-
-  late void Function(String) onMessage;
-  late void Function(bool) onConnectionStatusChanged;
-  late BuildContext context;
-
-  bool hasShownConnectionError = false;
+  WebSocketChannel? _channel;
+  StreamSubscription? _streamSubscription;
+  var _videoFrameController = StreamController<Uint8List>.broadcast();
+  bool _isConnected = false;
+  Function(String)? _onMessage;
+  Function(bool)? _onConnectionStatusChanged;
 
   Stream<Uint8List> get videoFrameStream => _videoFrameController.stream;
 
-  SocketController();
-
   void configure({
     required BuildContext context,
-    required void Function(String) onMessage,
-    required void Function(bool) onConnectionStatusChanged,
+    required Function(String) onMessage,
+    required Function(bool) onConnectionStatusChanged,
   }) {
-    this.context = context;
-    this.onMessage = onMessage;
-    this.onConnectionStatusChanged = onConnectionStatusChanged;
+    _onMessage = onMessage;
+    _onConnectionStatusChanged = onConnectionStatusChanged;
   }
 
-  Future<void> initSocket() async {
-    log('initSocket');
-    try {
-      socket = await WebSocket.connect('ws://192.168.50.177:6789/ws/video-stream');
-      isConnected = true;
-      hasShownConnectionError = false;
-      ScaffoldMessenger.of(context).hideCurrentSnackBar();
-      onConnectionStatusChanged(true);
-      log('Connected to server');
-      onMessage('Connected to server');
+  void initSocket() {
+    log('Connecting from WebSocket... Current status: $_isConnected');
+    if (_isConnected) {
+      log('Already connected, skipping...');
+      return;
+    }
 
-      // Listen for messages
-      socket!.listen(
-        (data) {
+    // ปิดการเชื่อมต่อเก่าก่อนเริ่มใหม่ (ถ้ามี)
+    if (_channel != null) {
+      disconnect();
+    }
+
+    try {
+      _channel = WebSocketChannel.connect(
+        Uri.parse('ws://192.168.50.177:6789/ws/video-stream'),
+      );
+
+      _streamSubscription = _channel!.stream.listen(
+        (message) {
           try {
-            if (data is List<int>) {
-              // Handle binary video data
-              _videoFrameController.add(Uint8List.fromList(data));
-            } else {
-              // Handle JSON messages
-              final json = jsonDecode(data);
+            if (message is String) {
+              final json = jsonDecode(message);
               handleMessage(json);
+            } else if (message is List<int>) {
+              if (!_videoFrameController.isClosed) {
+                _videoFrameController.add(Uint8List.fromList(message));
+              }
             }
           } catch (e) {
-            onMessage('Error decoding message: $e');
+            log('Error processing message: $e');
+            _onMessage?.call('Error processing message: $e');
           }
         },
         onError: (error) {
-          if (!hasShownConnectionError) {
-            hasShownConnectionError = true;
-            serviceLocator<SocketErrorHandler>().handle(context, error);
-          }
-          onMessage('Connection error: $error');
-          isConnected = false;
-          onConnectionStatusChanged(false);
+          log('WebSocket Error: $error');
+          _handleDisconnection();
         },
         onDone: () {
-          isConnected = false;
-          onConnectionStatusChanged(false);
-          onMessage('Disconnected from server');
+          log('WebSocket Connection Closed');
+          _handleDisconnection();
         },
       );
+
+      _isConnected = true;
+      _onConnectionStatusChanged?.call(true);
+      log('WebSocket connected successfully');
     } catch (e) {
-      if (!hasShownConnectionError) {
-        hasShownConnectionError = true;
-        serviceLocator<SocketErrorHandler>().handle(context, e);
-      }
-      onMessage('Connection error: $e');
-      isConnected = false;
-      onConnectionStatusChanged(false);
+      log('WebSocket Connection Error: $e');
+      _handleDisconnection();
+      // ลองเชื่อมต่อใหม่หลังจาก delay สักครู่
+      Future.delayed(Duration(seconds: 2), initSocket);
     }
+  }
+
+  void _handleDisconnection() {
+    _isConnected = false;
+    _onConnectionStatusChanged?.call(false);
+    _cleanupConnections();
+  }
+
+  void _cleanupConnections() {
+    _streamSubscription?.cancel();
+    _streamSubscription = null;
+
+    _channel = null;
   }
 
   void handleMessage(Map<String, dynamic> json) {
     if (json['action'] == 'new') {
-      onMessage('Fetched drugitems for VN: ${json['vn']}');
+      _onMessage?.call('Fetched drugitems for VN: ${json['vn']}');
     }
 
     if (json['action'] == 'check') {
-      onMessage('Changed status for VN: ${json['vn']} and Drug: ${json['drug']}');
+      _onMessage?.call('Changed status for VN: ${json['vn']} and Drug: ${json['drug']}');
     }
 
     if (json['action'] == 'finish') {
-      onMessage('Finished for VN: ${json['vn']}');
+      _onMessage?.call('Finished for VN: ${json['vn']}');
     }
   }
 
   void sendMessage(Map<String, dynamic> message) {
-    if (socket != null && isConnected) {
-      socket!.add(jsonEncode(message));
-      onMessage('Sent: $message');
+    if (_channel != null && _isConnected) {
+      _channel!.sink.add(jsonEncode(message));
+      _onMessage?.call('Sent: $message');
     }
   }
 
@@ -181,7 +195,10 @@ class SocketController {
     required String vn,
     required List<Map<String, dynamic>> drugItems,
   }) {
-    if (!isConnected) return;
+    if (!_isConnected) {
+      log('Cannot send drug data: WebSocket not connected');
+      return;
+    }
 
     final data = {
       'action': 'send_drug_data',
@@ -193,10 +210,29 @@ class SocketController {
     sendMessage(data);
   }
 
+  void disconnect() {
+    log('Disconnecting from WebSocket...');
+
+    // ปิดการเชื่อมต่อก่อนแล้วค่อยอัพเดทสถานะ
+    try {
+      _streamSubscription?.cancel();
+      _channel?.sink.close(1000, 'Client disconnecting');
+    } catch (e) {
+      log('Error while disconnecting: $e');
+    } finally {
+      _streamSubscription = null;
+      _channel = null;
+      _isConnected = false;
+      _onConnectionStatusChanged?.call(false);
+
+      // สร้าง StreamController ใหม่เมื่อปิด
+      if (_videoFrameController.isClosed) {
+        _videoFrameController = StreamController<Uint8List>.broadcast();
+      }
+    }
+  }
+
   void dispose() {
-    socket?.close();
-    socket = null;
-    isConnected = false;
-    _videoFrameController.close();
+    disconnect();
   }
 }
