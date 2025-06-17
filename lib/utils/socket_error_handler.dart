@@ -13,8 +13,8 @@ class SocketErrorHandler {
             borderRadius: BorderRadius.circular(16), // โค้งมน
           ),
           margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-          content: Row(
-            children: const [
+          content: const Row(
+            children: [
               Icon(Icons.wifi_off, color: Colors.white, size: 30),
               SizedBox(width: 12),
               Expanded(

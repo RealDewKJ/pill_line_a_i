@@ -1,10 +1,8 @@
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
-import 'dart:ui';
 import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'button_cancel_model.dart';
 export 'button_cancel_model.dart';
 
@@ -59,21 +57,21 @@ class _ButtonCancelWidgetState extends State<ButtonCancelWidget> {
           return 48.0;
         }
       }(),
-      constraints: BoxConstraints(
+      constraints: const BoxConstraints(
         minWidth: 120.0,
       ),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100.0),
       ),
       child: Padding(
-        padding: EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
+        padding: const EdgeInsetsDirectional.fromSTEB(16.0, 0.0, 16.0, 0.0),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AutoSizeText(
               valueOrDefault<String>(
-                widget!.text,
+                widget.text,
                 'ยกเลิก',
               ),
               textAlign: TextAlign.start,
@@ -81,18 +79,15 @@ class _ButtonCancelWidgetState extends State<ButtonCancelWidget> {
               style: FlutterFlowTheme.of(context).bodyMedium.override(
                     font: GoogleFonts.sarabun(
                       fontWeight: FontWeight.normal,
-                      fontStyle:
-                          FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                      fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                     ),
                     color: FlutterFlowTheme.of(context).error,
                     fontSize: () {
                       if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                         return 14.0;
-                      } else if (MediaQuery.sizeOf(context).width <
-                          kBreakpointMedium) {
+                      } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                         return 14.0;
-                      } else if (MediaQuery.sizeOf(context).width <
-                          kBreakpointLarge) {
+                      } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                         return 16.0;
                       } else {
                         return 16.0;
@@ -100,8 +95,7 @@ class _ButtonCancelWidgetState extends State<ButtonCancelWidget> {
                     }(),
                     letterSpacing: 0.0,
                     fontWeight: FontWeight.normal,
-                    fontStyle:
-                        FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                    fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                   ),
             ),
           ],

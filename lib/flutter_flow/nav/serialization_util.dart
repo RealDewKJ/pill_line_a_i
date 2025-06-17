@@ -1,4 +1,7 @@
+// ignore_for_file: constant_identifier_names, prefer_iterable_wheretype
+
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:from_css_color/from_css_color.dart';
@@ -25,8 +28,7 @@ String placeToString(FFPlace place) => jsonEncode({
       'zipCode': place.zipCode,
     });
 
-String uploadedFileToString(FFUploadedFile uploadedFile) =>
-    uploadedFile.serialize();
+String uploadedFileToString(FFUploadedFile uploadedFile) => uploadedFile.serialize();
 
 String? serializeParam(
   dynamic param,
@@ -38,11 +40,8 @@ String? serializeParam(
       return null;
     }
     if (isList) {
-      final serializedValues = (param as Iterable)
-          .map((p) => serializeParam(p, paramType, isList: false))
-          .where((p) => p != null)
-          .map((p) => p!)
-          .toList();
+      final serializedValues =
+          (param as Iterable).map((p) => serializeParam(p, paramType, isList: false)).where((p) => p != null).map((p) => p!).toList();
       return json.encode(serializedValues);
     }
     String? data;
@@ -75,7 +74,7 @@ String? serializeParam(
     }
     return data;
   } catch (e) {
-    print('Error serializing parameter: $e');
+    log('Error serializing parameter: $e');
     return null;
   }
 }
@@ -109,9 +108,7 @@ LatLng? latLngFromString(String? latLngStr) {
 FFPlace placeFromString(String placeStr) {
   final serializedData = jsonDecode(placeStr) as Map<String, dynamic>;
   final data = {
-    'latLng': serializedData.containsKey('latLng')
-        ? latLngFromString(serializedData['latLng'] as String)
-        : const LatLng(0.0, 0.0),
+    'latLng': serializedData.containsKey('latLng') ? latLngFromString(serializedData['latLng'] as String) : const LatLng(0.0, 0.0),
     'name': serializedData['name'] ?? '',
     'address': serializedData['address'] ?? '',
     'city': serializedData['city'] ?? '',
@@ -130,8 +127,7 @@ FFPlace placeFromString(String placeStr) {
   );
 }
 
-FFUploadedFile uploadedFileFromString(String uploadedFileStr) =>
-    FFUploadedFile.deserialize(uploadedFileStr);
+FFUploadedFile uploadedFileFromString(String uploadedFileStr) => FFUploadedFile.deserialize(uploadedFileStr);
 
 enum ParamType {
   int,
@@ -180,9 +176,7 @@ dynamic deserializeParam<T>(
         return param == 'true';
       case ParamType.DateTime:
         final milliseconds = int.tryParse(param);
-        return milliseconds != null
-            ? DateTime.fromMillisecondsSinceEpoch(milliseconds)
-            : null;
+        return milliseconds != null ? DateTime.fromMillisecondsSinceEpoch(milliseconds) : null;
       case ParamType.DateTimeRange:
         return dateTimeRangeFromString(param);
       case ParamType.LatLng:
@@ -200,7 +194,7 @@ dynamic deserializeParam<T>(
         return null;
     }
   } catch (e) {
-    print('Error deserializing parameter: $e');
+    log('Error deserializing parameter: $e');
     return null;
   }
 }

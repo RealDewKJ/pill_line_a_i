@@ -76,16 +76,13 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
   bool loading = false;
 
   int get maxLines => widget.options.maxLines ?? 1;
-  String? get text =>
-      widget.options.textStyle?.fontSize == 0 ? null : widget.text;
+  String? get text => widget.options.textStyle?.fontSize == 0 ? null : widget.text;
 
   @override
   Widget build(BuildContext context) {
     Widget textWidget = loading
         ? SizedBox(
-            width: widget.options.width == null
-                ? _getTextWidth(text, widget.options.textStyle, maxLines)
-                : null,
+            width: widget.options.width == null ? _getTextWidth(text, widget.options.textStyle, maxLines) : null,
             child: Center(
               child: SizedBox(
                 width: 23,
@@ -100,8 +97,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
           )
         : AutoSizeText(
             text ?? '',
-            style:
-                text == null ? null : widget.options.textStyle?.withoutColor(),
+            style: text == null ? null : widget.options.textStyle?.withoutColor(),
             textAlign: widget.options.textAlign,
             maxLines: maxLines,
             overflow: TextOverflow.ellipsis,
@@ -126,74 +122,63 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
         : null;
 
     ButtonStyle style = ButtonStyle(
-      shape: MaterialStateProperty.resolveWith<OutlinedBorder>(
+      shape: WidgetStateProperty.resolveWith<OutlinedBorder>(
         (states) {
-          if (states.contains(MaterialState.hovered) &&
-              widget.options.hoverBorderSide != null) {
+          if (states.contains(WidgetState.hovered) && widget.options.hoverBorderSide != null) {
             return RoundedRectangleBorder(
-              borderRadius:
-                  widget.options.borderRadius ?? BorderRadius.circular(8),
+              borderRadius: widget.options.borderRadius ?? BorderRadius.circular(8),
               side: widget.options.hoverBorderSide!,
             );
           }
           return RoundedRectangleBorder(
-            borderRadius:
-                widget.options.borderRadius ?? BorderRadius.circular(8),
+            borderRadius: widget.options.borderRadius ?? BorderRadius.circular(8),
             side: widget.options.borderSide ?? BorderSide.none,
           );
         },
       ),
-      foregroundColor: MaterialStateProperty.resolveWith<Color?>(
+      foregroundColor: WidgetStateProperty.resolveWith<Color?>(
         (states) {
-          if (states.contains(MaterialState.disabled) &&
-              widget.options.disabledTextColor != null) {
+          if (states.contains(WidgetState.disabled) && widget.options.disabledTextColor != null) {
             return widget.options.disabledTextColor;
           }
-          if (states.contains(MaterialState.hovered) &&
-              widget.options.hoverTextColor != null) {
+          if (states.contains(WidgetState.hovered) && widget.options.hoverTextColor != null) {
             return widget.options.hoverTextColor;
           }
           return widget.options.textStyle?.color ?? Colors.white;
         },
       ),
-      backgroundColor: MaterialStateProperty.resolveWith<Color?>(
+      backgroundColor: WidgetStateProperty.resolveWith<Color?>(
         (states) {
-          if (states.contains(MaterialState.disabled) &&
-              widget.options.disabledColor != null) {
+          if (states.contains(WidgetState.disabled) && widget.options.disabledColor != null) {
             return widget.options.disabledColor;
           }
-          if (states.contains(MaterialState.hovered) &&
-              widget.options.hoverColor != null) {
+          if (states.contains(WidgetState.hovered) && widget.options.hoverColor != null) {
             return widget.options.hoverColor;
           }
           return widget.options.color;
         },
       ),
-      overlayColor: MaterialStateProperty.resolveWith<Color?>((states) {
-        if (states.contains(MaterialState.pressed)) {
+      overlayColor: WidgetStateProperty.resolveWith<Color?>((states) {
+        if (states.contains(WidgetState.pressed)) {
           return widget.options.splashColor;
         }
         return widget.options.hoverColor == null ? null : Colors.transparent;
       }),
-      padding: MaterialStateProperty.all(widget.options.padding ??
-          const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0)),
-      elevation: MaterialStateProperty.resolveWith<double?>(
+      padding: WidgetStateProperty.all(widget.options.padding ?? const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4.0)),
+      elevation: WidgetStateProperty.resolveWith<double?>(
         (states) {
-          if (states.contains(MaterialState.hovered) &&
-              widget.options.hoverElevation != null) {
+          if (states.contains(WidgetState.hovered) && widget.options.hoverElevation != null) {
             return widget.options.hoverElevation!;
           }
           return widget.options.elevation ?? 2.0;
         },
       ),
-      iconColor: MaterialStateProperty.resolveWith<Color?>(
+      iconColor: WidgetStateProperty.resolveWith<Color?>(
         (states) {
-          if (states.contains(MaterialState.disabled) &&
-              widget.options.disabledTextColor != null) {
+          if (states.contains(WidgetState.disabled) && widget.options.disabledTextColor != null) {
             return widget.options.disabledTextColor;
           }
-          if (states.contains(MaterialState.hovered) &&
-              widget.options.hoverTextColor != null) {
+          if (states.contains(WidgetState.hovered) && widget.options.hoverTextColor != null) {
             return widget.options.hoverTextColor;
           }
           return widget.options.iconColor;
@@ -217,8 +202,7 @@ class _FFButtonWidgetState extends State<FFButtonWidget> {
             border: Border.fromBorderSide(
               widget.options.borderSide ?? BorderSide.none,
             ),
-            borderRadius:
-                widget.options.borderRadius ?? BorderRadius.circular(8),
+            borderRadius: widget.options.borderRadius ?? BorderRadius.circular(8),
           ),
           child: IconButton(
             splashRadius: 1.0,
@@ -292,13 +276,12 @@ extension _WithoutColorExtension on TextStyle {
 }
 
 // Slightly hacky method of getting the layout width of the provided text.
-double? _getTextWidth(String? text, TextStyle? style, int maxLines) =>
-    text != null
-        ? (TextPainter(
-            text: TextSpan(text: text, style: style),
-            textDirection: TextDirection.ltr,
-            maxLines: maxLines,
-          )..layout())
-            .size
-            .width
-        : null;
+double? _getTextWidth(String? text, TextStyle? style, int maxLines) => text != null
+    ? (TextPainter(
+        text: TextSpan(text: text, style: style),
+        textDirection: TextDirection.ltr,
+        maxLines: maxLines,
+      )..layout())
+        .size
+        .width
+    : null;

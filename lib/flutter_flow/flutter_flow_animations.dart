@@ -37,7 +37,9 @@ void createAnimation(AnimationInfo animation, TickerProvider vsync) {
 }
 
 void setupAnimations(Iterable<AnimationInfo> animations, TickerProvider vsync) {
-  animations.forEach((animation) => createAnimation(animation, vsync));
+  for (var animation in animations) {
+    createAnimation(animation, vsync);
+  }
 }
 
 extension AnimatedWidgetExtension on Widget {
@@ -49,12 +51,8 @@ extension AnimatedWidgetExtension on Widget {
     return Animate(
       effects: animationInfo.effects,
       child: this,
-      onPlay: (controller) => animationInfo.loop
-          ? controller.repeat(reverse: animationInfo.reverse)
-          : null,
-      onComplete: (controller) => !animationInfo.loop && animationInfo.reverse
-          ? controller.reverse()
-          : null,
+      onPlay: (controller) => animationInfo.loop ? controller.repeat(reverse: animationInfo.reverse) : null,
+      onComplete: (controller) => !animationInfo.loop && animationInfo.reverse ? controller.reverse() : null,
     );
   }
 
@@ -65,26 +63,19 @@ extension AnimatedWidgetExtension on Widget {
   }) {
     animationInfo.maybeUpdateEffects(effects);
     return hasBeenTriggered || animationInfo.applyInitialState
-        ? Animate(
-            controller: animationInfo.controller,
-            autoPlay: false,
-            effects: animationInfo.effects,
-            child: this)
+        ? Animate(controller: animationInfo.controller, autoPlay: false, effects: animationInfo.effects, child: this)
         : this;
   }
 }
 
 class TiltEffect extends Effect<Offset> {
   const TiltEffect({
-    Duration? delay,
-    Duration? duration,
-    Curve? curve,
+    super.delay,
+    super.duration,
+    super.curve,
     Offset? begin,
     Offset? end,
   }) : super(
-          delay: delay,
-          duration: duration,
-          curve: curve,
           begin: begin ?? const Offset(0.0, 0.0),
           end: end ?? const Offset(0.0, 0.0),
         );

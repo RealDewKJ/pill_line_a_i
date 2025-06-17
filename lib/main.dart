@@ -1,28 +1,34 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
-import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
-import '/flutter_flow/flutter_flow_theme.dart';
-import 'flutter_flow/flutter_flow_util.dart';
-import 'flutter_flow/nav/nav.dart';
-import 'index.dart';
+import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
+import 'package:pill_line_a_i/flutter_flow/flutter_flow_util.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   GoRouter.optionURLReflectsImperativeAPIs = true;
   usePathUrlStrategy();
-  setUpServiceLocator();
-  await EHPApi.initializeEHPToken();
-  await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
+
+  // Setup all dependencies
+  setupServiceLocator();
+
+  // Initialize EHP
+  Endpoints.isEHPConnect = await EHPApi.initializeEHPToken();
+  if (Endpoints.isEHPConnect) {
+    await getIt<EHPApi>().getUserJWT('0000000000001', 'admin');
+  }
+
   Intl.defaultLocale = "th";
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
-  // This widget is the root of your application.
+  const MyApp({super.key});
+
   @override
   State<MyApp> createState() => _MyAppState();
 
@@ -39,9 +45,9 @@ class MyAppScrollBehavior extends MaterialScrollBehavior {
 
 class _MyAppState extends State<MyApp> {
   ThemeMode _themeMode = ThemeMode.system;
-
   late AppStateNotifier _appStateNotifier;
   late GoRouter _router;
+
   String getRoute([RouteMatch? routeMatch]) {
     final RouteMatch lastMatch = routeMatch ?? _router.routerDelegate.currentConfiguration.last;
     final RouteMatchList matchList = lastMatch is ImperativeRouteMatch ? lastMatch.matches : _router.routerDelegate.currentConfiguration;
@@ -53,7 +59,6 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-
     _appStateNotifier = AppStateNotifier.instance;
     _router = createRouter(_appStateNotifier);
   }
@@ -68,7 +73,7 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       title: 'PillLine AI',
       scrollBehavior: MyAppScrollBehavior(),
-      localizationsDelegates: [
+      localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

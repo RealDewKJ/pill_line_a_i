@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages, non_constant_identifier_names
+
 import 'dart:async';
 import 'dart:io';
 import 'package:buddhist_datetime_dateformat_sns/buddhist_datetime_dateformat_sns.dart';
@@ -26,9 +28,13 @@ class Endpoints {
   static String baseUrl = "https://wg3.bmscloud.in.th/99999/phapi"; //*Prod
   // static String baseDomain = "https://uat.deverloper.bmscloud.in.th"; //*Dev
   // static String baseUrl = "https://uat.deverloper.bmscloud.in.th/99999/phapi"; //*Dev
+  // static String baseDomain = "http://10.91.114.73:8001/99999/phapi"; //*Dev
+  // static String baseUrl = "http://10.91.114.73:8001/99999/phapi"; //*Dev
   static String lineAPIUrl = "https://notify-api.line.me/api/notify";
+
   static String dbType = '';
-  static String pdfGateWay = '';
+  static bool isEHPConnect = false;
+
   // receiveTimeout
   static const int receiveTimeout = 60000;
 
@@ -229,11 +235,11 @@ String addZero(String input, int length) {
 }
 
 String getNewGUID() {
-  return '{${Uuid().v4()}}'.toUpperCase();
+  return '{${const Uuid().v4()}}'.toUpperCase();
 }
 
 bool xcheckPID(String cid) {
-  final cidStr = cid.replaceAll(new RegExp(r'[^0-9]'), '');
+  final cidStr = cid.replaceAll(RegExp(r'[^0-9]'), '');
   if (cidStr.length == 13) {
     return true;
   }
@@ -374,6 +380,7 @@ Map<String, dynamic> _readWebBrowserInfo(WebBrowserInfo data) {
   EHPMobile.deviceModel = '${data.vendor} ${data.browserName} ${data.appVersion} ';
 
   return <String, dynamic>{
+    // ignore: deprecated_member_use
     'browserName': describeEnum(data.browserName),
     'appCodeName': data.appCodeName,
     'appName': data.appName,
@@ -437,7 +444,7 @@ Map<String, dynamic> _readWindowsDeviceInfo(WindowsDeviceInfo data) {
   };
 }
 
-Future waitWhile(bool test(), [int maxMSWait = 2000]) {
+Future waitWhile(bool Function() test, [int maxMSWait = 2000]) {
   var completer = Completer();
   final stopwatch = Stopwatch()..start();
   check() {
@@ -604,7 +611,7 @@ Future<void> showErrorDialog(String errorMessage) async {
       middleText: errorMessage,
       backgroundColor: Colors.white,
       titleStyle: TextStyle(color: Colors.red.shade700),
-      middleTextStyle: TextStyle(color: Colors.indigo),
+      middleTextStyle: const TextStyle(color: Colors.indigo),
       radius: 10);
 }
 

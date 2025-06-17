@@ -7,7 +7,7 @@
     <application
         android:label="PillLine AI"
         tools:replace="android:label"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/splash"
         android:requestLegacyExternalStorage="true">
 
         <activity

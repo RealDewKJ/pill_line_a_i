@@ -1,13 +1,9 @@
-import '/flutter_flow/flutter_flow_theme.dart';
+import 'package:pill_line_a_i/features/home/presentation/widgets/home_page_widget.dart';
+
 import '/flutter_flow/flutter_flow_util.dart';
-import '/flutter_flow/flutter_flow_widgets.dart';
 import '/pages/widget/app_bar/app_bar_widget.dart';
 import '/pages/widget/item_drug/item_drug_widget.dart';
-import 'dart:ui';
-import 'home_page_widget.dart' show HomePageWidget;
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class HomePageModel extends FlutterFlowModel<HomePageWidget> {
   ///  State fields for stateful widgets in this page.

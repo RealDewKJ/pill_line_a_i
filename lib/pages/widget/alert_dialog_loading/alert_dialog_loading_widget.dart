@@ -2,14 +2,11 @@ import '/flutter_flow/flutter_flow_animations.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/pages/widget/button_cancel/button_cancel_widget.dart';
-import 'dart:math';
 import 'dart:ui';
 import 'package:flutter/material.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'alert_dialog_loading_model.dart';
 export 'alert_dialog_loading_model.dart';
 
@@ -17,12 +14,10 @@ class AlertDialogLoadingWidget extends StatefulWidget {
   const AlertDialogLoadingWidget({super.key});
 
   @override
-  State<AlertDialogLoadingWidget> createState() =>
-      _AlertDialogLoadingWidgetState();
+  State<AlertDialogLoadingWidget> createState() => _AlertDialogLoadingWidgetState();
 }
 
-class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
-    with TickerProviderStateMixin {
+class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget> with TickerProviderStateMixin {
   late AlertDialogLoadingModel _model;
 
   final animationsMap = <String, AnimationInfo>{};
@@ -53,8 +48,8 @@ class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
             curve: Curves.easeInOut,
             delay: 0.0.ms,
             duration: 600.0.ms,
-            begin: Offset(0.5, 0.5),
-            end: Offset(1.0, 1.0),
+            begin: const Offset(0.5, 0.5),
+            end: const Offset(1.0, 1.0),
           ),
         ],
       ),
@@ -92,10 +87,10 @@ class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
             }
           }(),
           decoration: BoxDecoration(
-            color: Color(0xE5FFFFFF),
+            color: const Color(0xE5FFFFFF),
             borderRadius: BorderRadius.circular(24.0),
             border: Border.all(
-              color: Color(0xB2F1F4F8),
+              color: const Color(0xB2F1F4F8),
             ),
           ),
           child: Column(
@@ -106,11 +101,9 @@ class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
                   () {
                     if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                       return 12.0;
-                    } else if (MediaQuery.sizeOf(context).width <
-                        kBreakpointMedium) {
+                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                       return 12.0;
-                    } else if (MediaQuery.sizeOf(context).width <
-                        kBreakpointLarge) {
+                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                       return 24.0;
                     } else {
                       return 24.0;
@@ -124,28 +117,22 @@ class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
                     Lottie.asset(
                       'assets/jsons/RQc9UTkiIW.json',
                       width: () {
-                        if (MediaQuery.sizeOf(context).width <
-                            kBreakpointSmall) {
+                        if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                           return 84.0;
-                        } else if (MediaQuery.sizeOf(context).width <
-                            kBreakpointMedium) {
+                        } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                           return 84.0;
-                        } else if (MediaQuery.sizeOf(context).width <
-                            kBreakpointLarge) {
+                        } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                           return 92.0;
                         } else {
                           return 92.0;
                         }
                       }(),
                       height: () {
-                        if (MediaQuery.sizeOf(context).width <
-                            kBreakpointSmall) {
+                        if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                           return 84.0;
-                        } else if (MediaQuery.sizeOf(context).width <
-                            kBreakpointMedium) {
+                        } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                           return 84.0;
-                        } else if (MediaQuery.sizeOf(context).width <
-                            kBreakpointLarge) {
+                        } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                           return 92.0;
                         } else {
                           return 92.0;
@@ -153,58 +140,39 @@ class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
                       }(),
                       fit: BoxFit.contain,
                       animate: true,
-                    ).animateOnPageLoad(
-                        animationsMap['lottieAnimationOnPageLoadAnimation']!),
+                    ).animateOnPageLoad(animationsMap['lottieAnimationOnPageLoadAnimation']!),
                     Column(
                       mainAxisSize: MainAxisSize.max,
                       children: [
                         Text(
                           'กำลังโหลด',
-                          style:
-                              FlutterFlowTheme.of(context).titleMedium.override(
-                                    font: GoogleFonts.sarabun(
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .titleMedium
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .titleMedium
-                                          .fontStyle,
-                                    ),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .titleMedium
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .titleMedium
-                                        .fontStyle,
-                                  ),
+                          style: FlutterFlowTheme.of(context).titleMedium.override(
+                                font: GoogleFonts.sarabun(
+                                  fontWeight: FlutterFlowTheme.of(context).titleMedium.fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context).titleMedium.fontStyle,
+                                ),
+                                letterSpacing: 0.0,
+                                fontWeight: FlutterFlowTheme.of(context).titleMedium.fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context).titleMedium.fontStyle,
+                              ),
                         ),
                         Text(
                           'กำลังโหลดข้อมูล กรุณารอสักครู่...',
                           textAlign: TextAlign.center,
-                          style:
-                              FlutterFlowTheme.of(context).bodyLarge.override(
-                                    font: GoogleFonts.sarabun(
-                                      fontWeight: FlutterFlowTheme.of(context)
-                                          .bodyLarge
-                                          .fontWeight,
-                                      fontStyle: FlutterFlowTheme.of(context)
-                                          .bodyLarge
-                                          .fontStyle,
-                                    ),
-                                    letterSpacing: 0.0,
-                                    fontWeight: FlutterFlowTheme.of(context)
-                                        .bodyLarge
-                                        .fontWeight,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyLarge
-                                        .fontStyle,
-                                    lineHeight: 1.8,
-                                  ),
+                          style: FlutterFlowTheme.of(context).bodyLarge.override(
+                                font: GoogleFonts.sarabun(
+                                  fontWeight: FlutterFlowTheme.of(context).bodyLarge.fontWeight,
+                                  fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                ),
+                                letterSpacing: 0.0,
+                                fontWeight: FlutterFlowTheme.of(context).bodyLarge.fontWeight,
+                                fontStyle: FlutterFlowTheme.of(context).bodyLarge.fontStyle,
+                                lineHeight: 1.8,
+                              ),
                         ),
-                      ].divide(SizedBox(height: 8.0)),
+                      ].divide(const SizedBox(height: 8.0)),
                     ),
-                  ].divide(SizedBox(height: 24.0)),
+                  ].divide(const SizedBox(height: 24.0)),
                 ),
               ),
               Divider(
@@ -217,11 +185,9 @@ class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
                   () {
                     if (MediaQuery.sizeOf(context).width < kBreakpointSmall) {
                       return 12.0;
-                    } else if (MediaQuery.sizeOf(context).width <
-                        kBreakpointMedium) {
+                    } else if (MediaQuery.sizeOf(context).width < kBreakpointMedium) {
                       return 12.0;
-                    } else if (MediaQuery.sizeOf(context).width <
-                        kBreakpointLarge) {
+                    } else if (MediaQuery.sizeOf(context).width < kBreakpointLarge) {
                       return 24.0;
                     } else {
                       return 24.0;
@@ -237,10 +203,10 @@ class _AlertDialogLoadingWidgetState extends State<AlertDialogLoadingWidget>
                       child: wrapWithModel(
                         model: _model.buttonCancelModel,
                         updateCallback: () => safeSetState(() {}),
-                        child: ButtonCancelWidget(),
+                        child: const ButtonCancelWidget(),
                       ),
                     ),
-                  ].divide(SizedBox(width: 12.0)),
+                  ].divide(const SizedBox(width: 12.0)),
                 ),
               ),
             ],

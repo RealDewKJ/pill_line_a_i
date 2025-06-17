@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:dio/dio.dart';
 
 import 'package:flutter/cupertino.dart';
@@ -74,7 +76,7 @@ class DioClient {
     ProgressCallback? onReceiveProgress,
   }) async {
     try {
-      print("authHeader " + authHeader);
+      log("authHeader $authHeader");
       if (authHeader.isNotEmpty) {
         _dio.options.headers["Authorization"] = "Bearer $authHeader";
         //   debugPrint('Set authorization header to $authHeader');
@@ -82,7 +84,7 @@ class DioClient {
         _dio.options.headers.remove('Authorization');
       }
       _dio.options.baseUrl.trim();
-      print("URL " + url);
+      log("URL $url");
 
       // _dio.options.headers[_secretKeyName] = _secretKeyValue;
 
@@ -97,8 +99,8 @@ class DioClient {
         onSendProgress: onSendProgress,
         onReceiveProgress: onReceiveProgress,
       );
-      print("Response >>> response.data.toString");
-      print(response.data.toString());
+      log("Response >>> response.data.toString");
+      log(response.data.toString());
 
       return response;
     } catch (e) {
@@ -333,7 +335,7 @@ class IDPDioClient {
 
   IDPDioClient(this._dio) {
     _dio
-      ..options.baseUrl = '${Endpoints.idpBaseUrl}'
+      ..options.baseUrl = Endpoints.idpBaseUrl
       ..options.connectTimeout = const Duration(milliseconds: Endpoints.connectionTimeout)
       ..options.receiveTimeout = const Duration(milliseconds: Endpoints.receiveTimeout)
       ..options.responseType = ResponseType.json;
@@ -552,7 +554,7 @@ class FCMDioClient {
 
       _dio.options.headers["content-type"] = "application/json";
 
-      debugPrint('post data to ${_dio.options.baseUrl} payload : ${data}');
+      debugPrint('post data to ${_dio.options.baseUrl} payload : $data');
 
       response = await _dio.post(
         url,
@@ -647,7 +649,7 @@ class PHRDioClient {
 
   PHRDioClient(this._dio) {
     _dio
-      ..options.baseUrl = '${Endpoints.phrBaseUrl}'
+      ..options.baseUrl = Endpoints.phrBaseUrl
       ..options.connectTimeout = const Duration(milliseconds: Endpoints.connectionTimeout)
       ..options.receiveTimeout = const Duration(milliseconds: Endpoints.receiveTimeout)
       ..options.responseType = ResponseType.json;
