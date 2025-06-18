@@ -7,11 +7,11 @@ import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
+import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/pages/widget/alert_dialog_warning/alert_dialog_warning_widget.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/dio_client.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
-import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class CallApiController {

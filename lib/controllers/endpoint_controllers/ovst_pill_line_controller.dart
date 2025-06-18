@@ -1,6 +1,6 @@
+import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/models/ovst_pill_line_model.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
-import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 
 class OvstPillLineAPIController {
   static Future<List<OvstPillLine>> getOvstPillLines(String filter) async {

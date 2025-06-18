@@ -15,55 +15,59 @@ import 'package:pill_line_a_i/features/ex_notdata/presentation/bloc/ex_notdata_b
 import 'package:pill_line_a_i/features/ex_notdata/data/datasources/ex_notdata_remote_data_source.dart';
 import 'package:pill_line_a_i/features/ex_notdata/data/repositories/ex_notdata_repository_impl.dart';
 import 'package:pill_line_a_i/features/ex_notdata/domain/repositories/ex_notdata_repository.dart';
+import 'package:pill_line_a_i/features/video_stream/core/di/video_stream_di.dart';
 
-final getIt = GetIt.instance;
+GetIt serviceLocator = GetIt.instance;
 
 void setupServiceLocator() {
   // Core services
-  getIt.registerSingleton(Dio());
-  getIt.registerSingleton(DioClient(getIt<Dio>()));
-  getIt.registerSingleton(MOPHDioClient(Dio()));
-  getIt.registerSingleton(IDPDioClient(Dio()));
-  getIt.registerSingleton(PHRDioClient(Dio()));
-  getIt.registerSingleton(FCMDioClient(Dio()));
-  getIt.registerSingleton(EHPApi(dioClient: getIt<DioClient>()));
-  getIt.registerSingleton<SocketErrorHandler>(SocketErrorHandler());
+  serviceLocator.registerSingleton(Dio());
+  serviceLocator.registerSingleton(DioClient(serviceLocator<Dio>()));
+  serviceLocator.registerSingleton(MOPHDioClient(Dio()));
+  serviceLocator.registerSingleton(IDPDioClient(Dio()));
+  serviceLocator.registerSingleton(PHRDioClient(Dio()));
+  serviceLocator.registerSingleton(FCMDioClient(Dio()));
+  serviceLocator.registerSingleton(EHPApi(dioClient: serviceLocator<DioClient>()));
+  serviceLocator.registerSingleton<SocketErrorHandler>(SocketErrorHandler());
 
   // Controllers
-  getIt.registerLazySingleton<SocketController>(() {
+  serviceLocator.registerLazySingleton<SocketController>(() {
     final controller = SocketController();
-    controller.initSocket();
+    // controller.initSocket();
     return controller;
   });
-  getIt.registerLazySingleton(() => PillLineController());
+  serviceLocator.registerLazySingleton(() => PillLineController());
 
   // Data sources
-  getIt.registerLazySingleton<PillLineRemoteDataSource>(
+  serviceLocator.registerLazySingleton<PillLineRemoteDataSource>(
     () => PillLineRemoteDataSourceImpl(),
   );
-  getIt.registerLazySingleton<ExNotDataRemoteDataSource>(
+  serviceLocator.registerLazySingleton<ExNotDataRemoteDataSource>(
     () => ExNotDataRemoteDataSourceImpl(),
   );
 
   // Repositories
-  getIt.registerLazySingleton<PillLineRepository>(
-    () => PillLineRepositoryImpl(remoteDataSource: getIt()),
+  serviceLocator.registerLazySingleton<PillLineRepository>(
+    () => PillLineRepositoryImpl(remoteDataSource: serviceLocator()),
   );
-  getIt.registerLazySingleton<ExNotDataRepository>(
-    () => ExNotDataRepositoryImpl(remoteDataSource: getIt()),
+  serviceLocator.registerLazySingleton<ExNotDataRepository>(
+    () => ExNotDataRepositoryImpl(remoteDataSource: serviceLocator()),
   );
 
   // BLoCs
-  getIt.registerFactory(
-    () => PillLineBloc(repository: getIt()),
+  serviceLocator.registerFactory(
+    () => PillLineBloc(repository: serviceLocator()),
   );
-  getIt.registerFactory(
-    () => HomeBloc(repository: getIt()),
+  serviceLocator.registerFactory(
+    () => HomeBloc(repository: serviceLocator()),
   );
-  getIt.registerFactory(
+  serviceLocator.registerFactory(
     () => NotFoundBloc(),
   );
-  getIt.registerFactory(
-    () => ExNotDataBloc(repository: getIt()),
+  serviceLocator.registerFactory(
+    () => ExNotDataBloc(repository: serviceLocator()),
   );
+
+  // Setup VideoStream dependencies
+  VideoStreamDI.setup();
 }

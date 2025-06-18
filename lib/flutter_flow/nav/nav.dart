@@ -11,7 +11,6 @@ import 'package:pill_line_a_i/features/home/presentation/pages/home_page.dart';
 import 'package:pill_line_a_i/features/not_found/presentation/pages/not_found_page.dart';
 import 'package:pill_line_a_i/flutter_flow/flutter_flow_theme.dart';
 import 'package:pill_line_a_i/flutter_flow/flutter_flow_util.dart';
-import 'package:pill_line_a_i/pages/widget/video_stream_dialog.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
 import 'package:provider/provider.dart';
 
@@ -46,7 +45,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
       errorBuilder: (context, state) => BlocProvider(
-        create: (context) => getIt<NotFoundBloc>(),
+        create: (context) => serviceLocator<NotFoundBloc>(),
         child: const NotFoundPage(),
       ),
       redirect: (context, state) {
@@ -60,7 +59,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: '_initialize',
           path: '/',
           builder: (context, _) => BlocProvider(
-            create: (context) => getIt<ExNotDataBloc>(),
+            create: (context) => serviceLocator<ExNotDataBloc>(),
             child: const ExNotDataPage(),
           ),
         ),
@@ -68,7 +67,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: HomePage.routeName,
           path: HomePage.routePath,
           builder: (context, params) => BlocProvider(
-            create: (context) => getIt<HomeBloc>()..add(LoadHomeData()),
+            create: (context) => serviceLocator<HomeBloc>()..add(LoadHomeData()),
             child: const HomePage(),
           ),
         ),
@@ -76,7 +75,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: ExNotDataPage.routeName,
           path: ExNotDataPage.routePath,
           builder: (context, params) => BlocProvider(
-            create: (context) => getIt<ExNotDataBloc>(),
+            create: (context) => serviceLocator<ExNotDataBloc>(),
             child: const ExNotDataPage(),
           ),
         ),
@@ -268,28 +267,28 @@ class Nav {
       case '/':
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => getIt<ExNotDataBloc>(),
+            create: (context) => serviceLocator<ExNotDataBloc>(),
             child: const ExNotDataPage(),
           ),
         );
       case '/home':
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => getIt<HomeBloc>()..add(LoadHomeData()),
+            create: (context) => serviceLocator<HomeBloc>()..add(LoadHomeData()),
             child: const HomePage(),
           ),
         );
       case '/notFound':
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => getIt<NotFoundBloc>(),
+            create: (context) => serviceLocator<NotFoundBloc>(),
             child: const NotFoundPage(),
           ),
         );
       default:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => getIt<NotFoundBloc>(),
+            create: (context) => serviceLocator<NotFoundBloc>(),
             child: const NotFoundPage(),
           ),
         );

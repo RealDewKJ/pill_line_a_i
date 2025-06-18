@@ -13,7 +13,7 @@ class NotFoundPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<NotFoundBloc>(),
+      create: (context) => serviceLocator<NotFoundBloc>(),
       child: const NotFoundWidget(),
     );
   }

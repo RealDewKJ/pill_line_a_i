@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:pill_line_a_i/controllers/endpoint_controllers/ehp_pill_conveyor_controller.dart';
 import 'package:pill_line_a_i/controllers/pill_line_controller.dart';
 import 'package:pill_line_a_i/controllers/socket_controller.dart';
+import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/features/ex_notdata/presentation/widgets/ex_notdata_widget.dart';
 import 'package:pill_line_a_i/features/home/presentation/widgets/home_page_model.dart';
 import 'package:pill_line_a_i/models/ehp_pill_conveyor_model.dart';
@@ -13,7 +14,6 @@ import 'package:pill_line_a_i/pages/widget/alert_dialog_error/alert_dialog_error
 import 'package:pill_line_a_i/pages/widget/alert_dialog_not_drug_in_list/alert_dialog_not_drug_in_list_widget.dart';
 import 'package:pill_line_a_i/pages/widget/alert_dialog_success/alert_dialog_success_widget.dart';
 import 'package:pill_line_a_i/pages/widget/alert_dialog_warning/alert_dialog_warning_widget.dart';
-import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 import 'package:pill_line_a_i/utils/global_widget.dart';
 
 import '/flutter_flow/flutter_flow_theme.dart';

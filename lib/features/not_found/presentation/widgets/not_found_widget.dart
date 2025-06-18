@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/flutter_flow/flutter_flow_theme.dart';
 import 'package:pill_line_a_i/flutter_flow/flutter_flow_util.dart';
 import 'package:pill_line_a_i/index.dart';
@@ -6,7 +7,6 @@ import 'package:pill_line_a_i/pages/widget/app_bar/app_bar_widget.dart';
 import 'package:lottie/lottie.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
-import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 
 class NotFoundWidget extends StatefulWidget {
   const NotFoundWidget({super.key});

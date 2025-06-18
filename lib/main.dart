@@ -19,7 +19,7 @@ void main() async {
   // Initialize EHP
   Endpoints.isEHPConnect = await EHPApi.initializeEHPToken();
   if (Endpoints.isEHPConnect) {
-    await getIt<EHPApi>().getUserJWT('0000000000001', 'admin');
+    await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
   }
 
   Intl.defaultLocale = "th";

@@ -20,12 +20,12 @@ import 'ehp_endpoint.dart';
 import 'ehp_locator.dart';*/
 
 import 'package:encrypt/encrypt.dart' as enc;
+import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'dart:developer' as log_dev;
 
 import 'package:pill_line_a_i/services/ehp_endpoint/dio_client.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/dio_exception.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
-import 'package:pill_line_a_i/services/ehp_endpoint/ehp_locator.dart';
 
 Duration? durationParse(String time) {
   try {

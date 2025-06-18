@@ -13,7 +13,7 @@ class ExNotDataPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => getIt<ExNotDataBloc>()..add(LoadExNotData()),
+      create: (context) => serviceLocator<ExNotDataBloc>()..add(LoadExNotData()),
       child: const ExNotDataWidget(),
     );
   }
