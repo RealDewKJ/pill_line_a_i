@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pill_line_a_i/core/di/service_locator.dart';
-import '../bloc/ex_notdata_bloc.dart';
-import '../widgets/ex_notdata_widget.dart';
+import 'package:pill_line_a_i/features/ex_notdata/presentation/bloc/ex_notdata_bloc.dart';
+import 'package:pill_line_a_i/features/ex_notdata/presentation/widgets/ex_notdata_widget.dart';
 
 class ExNotDataPage extends StatelessWidget {
-  const ExNotDataPage({Key? key}) : super(key: key);
+  const ExNotDataPage({super.key});
 
   static const String routeName = 'ex_notdata';
   static const String routePath = '/ex_notdata';
@@ -13,7 +13,7 @@ class ExNotDataPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => serviceLocator<ExNotDataBloc>()..add(LoadExNotData()),
+      create: (context) => serviceLocator<ExNotDataBloc>(),
       child: const ExNotDataWidget(),
     );
   }

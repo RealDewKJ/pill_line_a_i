@@ -100,6 +100,15 @@ dev_dependencies:
   bloc_test: ^9.1.5
   build_runner: ^2.4.8
 
+# Scripts for development
+scripts:
+  test: flutter test
+  test:watch: flutter test --watch
+  build:mocks: flutter pub run build_runner build
+  build:mocks:watch: flutter pub run build_runner watch
+  clean:mocks: flutter pub run build_runner clean
+  clean:build: flutter clean && flutter pub get && flutter pub run build_runner build
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

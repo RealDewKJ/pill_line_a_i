@@ -203,17 +203,17 @@ class _AlertDialogWarningWidgetState extends State<AlertDialogWarningWidget> wit
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Expanded(
-                      child: wrapWithModel(
-                        model: _model.buttonCancelModel,
-                        updateCallback: () => safeSetState(() {}),
-                        child: InkWell(
-                            onTap: () async {
-                              Navigator.pop(context, false);
-                            },
-                            child: const ButtonCancelWidget()),
-                      ),
-                    ),
+                    // Expanded(
+                    //   child: wrapWithModel(
+                    //     model: _model.buttonCancelModel,
+                    //     updateCallback: () => safeSetState(() {}),
+                    //     child: InkWell(
+                    //         onTap: () async {
+                    //           Navigator.pop(context, false);
+                    //         },
+                    //         child: const ButtonCancelWidget()),
+                    //   ),
+                    // ),
                     Expanded(
                       child: wrapWithModel(
                         model: _model.buttonPrimaryModel,

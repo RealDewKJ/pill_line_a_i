@@ -67,7 +67,7 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: HomePage.routeName,
           path: HomePage.routePath,
           builder: (context, params) => BlocProvider(
-            create: (context) => serviceLocator<HomeBloc>()..add(LoadHomeData()),
+            create: (context) => serviceLocator<HomeBloc>(),
             child: const HomePage(),
           ),
         ),
@@ -77,6 +77,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           builder: (context, params) => BlocProvider(
             create: (context) => serviceLocator<ExNotDataBloc>(),
             child: const ExNotDataPage(),
+          ),
+        ),
+        FFRoute(
+          name: NotFoundPage.routeName,
+          path: NotFoundPage.routePath,
+          builder: (context, params) => BlocProvider(
+            create: (context) => serviceLocator<NotFoundBloc>(),
+            child: const NotFoundPage(),
           ),
         ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
@@ -271,14 +279,21 @@ class Nav {
             child: const ExNotDataPage(),
           ),
         );
-      case '/home':
+      case HomePage.routePath:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => serviceLocator<HomeBloc>()..add(LoadHomeData()),
+            create: (context) => serviceLocator<HomeBloc>(),
             child: const HomePage(),
           ),
         );
-      case '/notFound':
+      case ExNotDataPage.routePath:
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => serviceLocator<ExNotDataBloc>(),
+            child: const ExNotDataPage(),
+          ),
+        );
+      case NotFoundPage.routePath:
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
             create: (context) => serviceLocator<NotFoundBloc>(),
@@ -297,7 +312,7 @@ class Nav {
 
   static void navigateToHome(BuildContext context) {
     context.pushNamed(
-      'home',
+      HomePage.routeName,
       extra: <String, dynamic>{
         kTransitionInfoKey: const TransitionInfo(
           hasTransition: true,
@@ -310,7 +325,7 @@ class Nav {
 
   static void navigateToExNotData(BuildContext context) {
     context.pushNamed(
-      'exNotdata',
+      ExNotDataPage.routeName,
       extra: <String, dynamic>{
         kTransitionInfoKey: const TransitionInfo(
           hasTransition: true,
@@ -323,7 +338,7 @@ class Nav {
 
   static void navigateToNotFound(BuildContext context) {
     context.pushNamed(
-      'notFound',
+      NotFoundPage.routeName,
       extra: <String, dynamic>{
         kTransitionInfoKey: const TransitionInfo(
           hasTransition: true,

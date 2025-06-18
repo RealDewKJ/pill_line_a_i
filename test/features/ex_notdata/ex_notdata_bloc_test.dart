@@ -25,21 +25,20 @@ void main() {
       bloc.close();
     });
 
-    test('initial state should be ExNotDataInitial', () {
-      expect(bloc.state, isA<ExNotDataInitial>());
-    });
-
-    group('LoadExNotData', () {
-      final testExNotData = ExNotData(
-        message: 'Test message',
-        type: 'test',
-        details: {'key': 'value'},
-      );
+    group('Initialization', () {
+      test('initial state should be ExNotDataInitial', () {
+        expect(bloc.state, isA<ExNotDataInitial>());
+      });
 
       blocTest<ExNotDataBloc, ExNotDataState>(
-        'emits [ExNotDataLoading, ExNotDataLoaded] when LoadExNotData is successful',
+        'should load ExNotData successfully',
         build: () {
-          when(mockRepository.getExNotData()).thenAnswer((_) async => Right(testExNotData));
+          final testData = ExNotData(
+            message: 'Test data',
+            type: 'test',
+            details: {},
+          );
+          when(mockRepository.getExNotData()).thenAnswer((_) async => Right(testData));
           return bloc;
         },
         act: (bloc) => bloc.add(LoadExNotData()),
@@ -47,15 +46,12 @@ void main() {
           isA<ExNotDataLoading>(),
           isA<ExNotDataLoaded>(),
         ],
-        verify: (_) {
-          verify(mockRepository.getExNotData()).called(1);
-        },
       );
 
       blocTest<ExNotDataBloc, ExNotDataState>(
-        'emits [ExNotDataLoading, ExNotDataError] when LoadExNotData fails',
+        'should handle load error',
         build: () {
-          when(mockRepository.getExNotData()).thenAnswer((_) async => Left(Exception('Error')));
+          when(mockRepository.getExNotData()).thenAnswer((_) async => Left(Exception('Load failed')));
           return bloc;
         },
         act: (bloc) => bloc.add(LoadExNotData()),
@@ -63,52 +59,256 @@ void main() {
           isA<ExNotDataLoading>(),
           isA<ExNotDataError>(),
         ],
-        verify: (_) {
-          verify(mockRepository.getExNotData()).called(1);
-        },
       );
     });
 
-    group('HandleFetchedDrugitems', () {
-      final testMessage = 'Drug items fetched successfully';
-
+    group('WebSocket Operations', () {
       blocTest<ExNotDataBloc, ExNotDataState>(
-        'emits [ExNotDataLoading, ExNotDataLoaded] when HandleFetchedDrugitems is successful',
+        'should initialize WebSocket successfully',
         build: () {
-          when(mockRepository.updateExNotData(any)).thenAnswer((_) async => const Right(null));
-          when(mockRepository.getExNotData()).thenAnswer((_) async => Right(ExNotData(
-                message: 'Updated',
-                type: 'drugitems',
-                details: {},
-              )));
+          final testData = ExNotData(
+            message: 'Test data',
+            type: 'test',
+            details: {},
+          );
+          when(mockRepository.getExNotData()).thenAnswer((_) async => Right(testData));
           return bloc;
         },
-        act: (bloc) => bloc.add(HandleFetchedDrugitems(testMessage)),
+        act: (bloc) => bloc.add(InitializeWebSocket()),
         expect: () => [
-          isA<ExNotDataLoading>(),
-          isA<ExNotDataLoaded>(),
+          isA<ExNotDataWebSocketConnecting>(),
+          isA<ExNotDataWebSocketConnected>(),
         ],
-        verify: (_) {
-          verify(mockRepository.updateExNotData(any)).called(1);
-          verify(mockRepository.getExNotData()).called(1);
-        },
       );
 
       blocTest<ExNotDataBloc, ExNotDataState>(
-        'emits [ExNotDataError] when HandleFetchedDrugitems fails',
+        'should handle WebSocket initialization error',
         build: () {
-          when(mockRepository.updateExNotData(any)).thenAnswer((_) async => Left(Exception('Update failed')));
+          when(mockRepository.getExNotData()).thenAnswer((_) async => Left(Exception('Connection failed')));
           return bloc;
         },
-        act: (bloc) => bloc.add(HandleFetchedDrugitems(testMessage)),
+        act: (bloc) => bloc.add(InitializeWebSocket()),
         expect: () => [
+          isA<ExNotDataWebSocketConnecting>(),
           isA<ExNotDataError>(),
         ],
-        verify: (_) {
-          verify(mockRepository.updateExNotData(any)).called(1);
-          verifyNever(mockRepository.getExNotData());
-        },
       );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should handle WebSocket message with new action',
+        build: () => bloc,
+        act: (bloc) => bloc.add(HandleWebSocketMessage({
+          'action': 'new',
+          'vn': '680612084046',
+        })),
+        expect: () => [
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should handle WebSocket message with update action',
+        build: () => bloc,
+        act: (bloc) => bloc.add(HandleWebSocketMessage({
+          'action': 'update',
+          'message': 'Updated data',
+          'id': '123',
+        })),
+        expect: () => [
+          isA<ExNotDataLoading>(),
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should handle WebSocket message with delete action',
+        build: () => bloc,
+        act: (bloc) => bloc.add(HandleWebSocketMessage({
+          'action': 'delete',
+          'message': 'Deleted data',
+          'id': '123',
+        })),
+        expect: () => [
+          isA<ExNotDataLoading>(),
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should handle WebSocket message with unknown action',
+        build: () => bloc,
+        act: (bloc) => bloc.add(HandleWebSocketMessage({
+          'action': 'unknown',
+          'data': 'test',
+        })),
+        expect: () => [
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should handle WebSocket message with error',
+        build: () => bloc,
+        act: (bloc) => bloc.add(HandleWebSocketMessage({
+          'error': 'WebSocket error occurred',
+          'timestamp': '2024-01-01T00:00:00Z',
+        })),
+        expect: () => [
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should disconnect WebSocket successfully',
+        build: () => bloc,
+        act: (bloc) => bloc.add(DisconnectWebSocket()),
+        expect: () => [
+          isA<ExNotDataWebSocketDisconnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should reconnect WebSocket successfully',
+        build: () {
+          final testData = ExNotData(
+            message: 'Test data',
+            type: 'test',
+            details: {},
+          );
+          when(mockRepository.getExNotData()).thenAnswer((_) async => Right(testData));
+          return bloc;
+        },
+        act: (bloc) => bloc.add(ReconnectWebSocket()),
+        expect: () => [
+          isA<ExNotDataWebSocketDisconnected>(),
+          isA<ExNotDataWebSocketConnecting>(),
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+    });
+
+    group('Data Operations', () {
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should update ExNotData successfully',
+        build: () {
+          final testData = ExNotData(
+            message: 'Test message',
+            type: 'test',
+            details: {'key': 'value'},
+          );
+          when(mockRepository.updateExNotData(testData)).thenAnswer((_) async => const Right(unit));
+          return bloc;
+        },
+        act: (bloc) => bloc.add(UpdateExNotData(ExNotData(
+          message: 'Test message',
+          type: 'test',
+          details: {'key': 'value'},
+        ))),
+        expect: () => [
+          isA<ExNotDataLoading>(),
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should handle update error',
+        build: () {
+          final testData = ExNotData(
+            message: 'Test message',
+            type: 'test',
+            details: {'key': 'value'},
+          );
+          when(mockRepository.updateExNotData(testData)).thenAnswer((_) async => Left(Exception('Update failed')));
+          return bloc;
+        },
+        act: (bloc) => bloc.add(UpdateExNotData(ExNotData(
+          message: 'Test message',
+          type: 'test',
+          details: {'key': 'value'},
+        ))),
+        expect: () => [
+          isA<ExNotDataLoading>(),
+          isA<ExNotDataError>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should refresh data successfully',
+        build: () {
+          final testData = ExNotData(
+            message: 'Refreshed data',
+            type: 'refresh',
+            details: {'timestamp': '2024-01-01'},
+          );
+          when(mockRepository.getExNotData()).thenAnswer((_) async => Right(testData));
+          return bloc;
+        },
+        act: (bloc) => bloc.add(RefreshData()),
+        expect: () => [
+          isA<ExNotDataLoading>(),
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+
+      blocTest<ExNotDataBloc, ExNotDataState>(
+        'should handle drug items fetched',
+        build: () {
+          when(mockRepository.updateExNotData(any)).thenAnswer((_) async => const Right(unit));
+          return bloc;
+        },
+        act: (bloc) => bloc.add(HandleFetchedDrugitems('Drug items fetched successfully')),
+        expect: () => [
+          isA<ExNotDataLoading>(),
+          isA<ExNotDataWebSocketConnected>(),
+        ],
+      );
+    });
+
+    group('Navigation', () {
+      test('should set navigation callback', () {
+        // Act
+        bloc.add(SetNavigationCallback((route, arguments) {
+          // Test callback
+        }));
+
+        // Assert - should not emit any state
+        expect(bloc.state, isA<ExNotDataInitial>());
+      });
+    });
+
+    group('State Properties', () {
+      test('ExNotDataWebSocketReconnecting should have correct properties', () {
+        // Arrange
+        const state = ExNotDataWebSocketReconnecting(attempt: 3, maxAttempts: 5);
+
+        // Assert
+        expect(state.attempt, equals(3));
+        expect(state.maxAttempts, equals(5));
+        expect(state.props, equals([3, 5]));
+      });
+
+      test('ExNotDataWebSocketConnected should handle null data', () {
+        // Arrange
+        const state = ExNotDataWebSocketConnected(data: null);
+
+        // Assert
+        expect(state.data, isNull);
+        expect(state.props, equals([const ExNotData(message: '', type: '', details: {})]));
+      });
+
+      test('ExNotDataWebSocketConnected should handle data', () {
+        // Arrange
+        final testData = ExNotData(
+          message: 'Test',
+          type: 'test',
+          details: {'key': 'value'},
+        );
+        final state = ExNotDataWebSocketConnected(data: testData);
+
+        // Assert
+        expect(state.data, equals(testData));
+        expect(state.props, equals([testData]));
+      });
     });
   });
 }

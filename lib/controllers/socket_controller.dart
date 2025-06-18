@@ -1,9 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:io';
 import 'dart:typed_data';
 import 'dart:async';
-import 'package:pill_line_a_i/utils/socket_error_handler.dart';
 import 'package:flutter/material.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 

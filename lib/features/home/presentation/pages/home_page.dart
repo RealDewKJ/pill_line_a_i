@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:pill_line_a_i/features/home/presentation/widgets/home_page_widget.dart';
 import '../bloc/home_bloc.dart';
+import '../bloc/pill_line_bloc.dart';
 import 'package:pill_line_a_i/core/di/service_locator.dart';
 
 class HomePage extends StatelessWidget {
@@ -12,8 +13,15 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => serviceLocator<HomeBloc>()..add(LoadHomeData()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) => serviceLocator<HomeBloc>(),
+        ),
+        BlocProvider(
+          create: (context) => serviceLocator<PillLineBloc>(),
+        ),
+      ],
       child: const HomePageWidget(),
     );
   }
