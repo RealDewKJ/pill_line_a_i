@@ -30,7 +30,7 @@ class VideoStreamController extends ChangeNotifier {
   final TransformationController transformationController = TransformationController();
 
   // Animation controller for position bounds
-  late AnimationController _animationController;
+  AnimationController? _animationController;
   late TickerProvider _vsync;
 
   // Zoom and tap details
@@ -176,7 +176,7 @@ class VideoStreamController extends ChangeNotifier {
         end: targetLeft,
       ).animate(
         CurvedAnimation(
-          parent: _animationController,
+          parent: _animationController ?? AnimationController(vsync: _vsync),
           curve: Curves.easeOutBack,
         ),
       );
@@ -186,18 +186,18 @@ class VideoStreamController extends ChangeNotifier {
         end: targetBottom,
       ).animate(
         CurvedAnimation(
-          parent: _animationController,
+          parent: _animationController ?? AnimationController(vsync: _vsync),
           curve: Curves.easeOutBack,
         ),
       );
 
-      _animationController.addListener(() {
+      _animationController?.addListener(() {
         leftPosition.value = leftAnim.value;
         bottomPosition.value = bottomAnim.value;
       });
 
-      _animationController.reset();
-      _animationController.forward();
+      _animationController?.reset();
+      _animationController?.forward();
     }
   }
 
@@ -307,7 +307,7 @@ class VideoStreamController extends ChangeNotifier {
     leftPosition.dispose();
     bottomPosition.dispose();
     transformationController.dispose();
-    _animationController.dispose();
+    _animationController?.dispose();
     super.dispose();
   }
 }
