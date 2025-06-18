@@ -11,7 +11,18 @@ import '../../data/services/ex_notdata_message_handler.dart';
 class ExNotDataDI {
   static final GetIt _getIt = GetIt.instance;
 
+  static void reset() {
+    try {
+      _getIt.reset();
+    } catch (e) {
+      // Ignore errors if nothing is registered
+    }
+  }
+
   static void init() {
+    // Reset first to ensure clean state
+    reset();
+
     // Data Sources
     _getIt.registerLazySingleton<ExNotDataRemoteDataSource>(
       () => ExNotDataRemoteDataSourceImpl(),
@@ -56,11 +67,15 @@ class ExNotDataDI {
   static ExNotDataMessageHandler get messageHandler => _getIt<ExNotDataMessageHandler>();
 
   static void dispose() {
-    _getIt.unregister<ExNotDataRepository>();
-    _getIt.unregister<GetExNotDataUseCase>();
-    _getIt.unregister<UpdateExNotDataUseCase>();
-    _getIt.unregister<ExNotDataWebSocketService>();
-    _getIt.unregister<ExNotDataNavigationService>();
-    _getIt.unregister<ExNotDataMessageHandler>();
+    try {
+      _getIt.unregister<ExNotDataRepository>();
+      _getIt.unregister<GetExNotDataUseCase>();
+      _getIt.unregister<UpdateExNotDataUseCase>();
+      _getIt.unregister<ExNotDataWebSocketService>();
+      _getIt.unregister<ExNotDataNavigationService>();
+      _getIt.unregister<ExNotDataMessageHandler>();
+    } catch (e) {
+      // Ignore errors if dependencies are not registered
+    }
   }
 }

@@ -186,24 +186,32 @@ class ExNotDataBloc extends Bloc<ExNotDataEvent, ExNotDataState> {
       // Listen to WebSocket messages
       _webSocketSubscription = _webSocketService.messageStream?.listen(
         (message) {
-          add(HandleWebSocketMessage(message));
+          if (!isClosed) {
+            add(HandleWebSocketMessage(message));
+          }
         },
         onError: (error) {
           log('WebSocket stream error: $error');
-          add(HandleWebSocketMessage({
-            'error': 'WebSocket stream error: $error',
-            'timestamp': DateTime.now().toIso8601String(),
-          }));
+          if (!isClosed) {
+            add(HandleWebSocketMessage({
+              'error': 'WebSocket stream error: $error',
+              'timestamp': DateTime.now().toIso8601String(),
+            }));
+          }
         },
       );
 
       // Load initial data
       await _loadInitialData();
 
-      emit(const ExNotDataWebSocketConnected());
+      if (!isClosed) {
+        emit(const ExNotDataWebSocketConnected());
+      }
       log('ExNotData WebSocket initialized successfully');
     } catch (e) {
-      emit(ExNotDataError('Failed to initialize WebSocket: $e'));
+      if (!isClosed) {
+        emit(ExNotDataError('Failed to initialize WebSocket: $e'));
+      }
       log('Error initializing ExNotData WebSocket: $e');
     }
   }
@@ -212,15 +220,25 @@ class ExNotDataBloc extends Bloc<ExNotDataEvent, ExNotDataState> {
     try {
       final result = await repository.getExNotData();
       result.fold(
-        (error) => add(HandleWebSocketMessage({'error': error.toString()})),
-        (data) => add(HandleWebSocketMessage({
-          'message': data.message,
-          'type': data.type,
-          'details': data.details,
-        })),
+        (error) {
+          if (!isClosed) {
+            add(HandleWebSocketMessage({'error': error.toString()}));
+          }
+        },
+        (data) {
+          if (!isClosed) {
+            add(HandleWebSocketMessage({
+              'message': data.message,
+              'type': data.type,
+              'details': data.details,
+            }));
+          }
+        },
       );
     } catch (e) {
-      add(HandleWebSocketMessage({'error': 'Failed to load initial data: $e'}));
+      if (!isClosed) {
+        add(HandleWebSocketMessage({'error': 'Failed to load initial data: $e'}));
+      }
     }
   }
 

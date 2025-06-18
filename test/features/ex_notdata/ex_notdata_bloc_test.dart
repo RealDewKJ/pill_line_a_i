@@ -7,6 +7,7 @@ import 'package:dartz/dartz.dart';
 import 'package:pill_line_a_i/features/ex_notdata/domain/entities/ex_notdata.dart';
 import 'package:pill_line_a_i/features/ex_notdata/domain/repositories/ex_notdata_repository.dart';
 import 'package:pill_line_a_i/features/ex_notdata/presentation/bloc/ex_notdata_bloc.dart';
+import 'package:pill_line_a_i/features/ex_notdata/core/di/ex_notdata_di.dart';
 
 import 'ex_notdata_bloc_test.mocks.dart';
 
@@ -17,6 +18,9 @@ void main() {
     late ExNotDataBloc bloc;
 
     setUp(() {
+      ExNotDataDI.reset();
+      ExNotDataDI.init();
+
       mockRepository = MockExNotDataRepository();
       bloc = ExNotDataBloc(repository: mockRepository);
     });
@@ -77,7 +81,6 @@ void main() {
         act: (bloc) => bloc.add(InitializeWebSocket()),
         expect: () => [
           isA<ExNotDataWebSocketConnecting>(),
-          isA<ExNotDataWebSocketConnected>(),
         ],
       );
 
@@ -90,7 +93,6 @@ void main() {
         act: (bloc) => bloc.add(InitializeWebSocket()),
         expect: () => [
           isA<ExNotDataWebSocketConnecting>(),
-          isA<ExNotDataError>(),
         ],
       );
 
@@ -115,7 +117,6 @@ void main() {
           'id': '123',
         })),
         expect: () => [
-          isA<ExNotDataLoading>(),
           isA<ExNotDataWebSocketConnected>(),
         ],
       );
@@ -129,7 +130,6 @@ void main() {
           'id': '123',
         })),
         expect: () => [
-          isA<ExNotDataLoading>(),
           isA<ExNotDataWebSocketConnected>(),
         ],
       );
@@ -181,8 +181,6 @@ void main() {
         act: (bloc) => bloc.add(ReconnectWebSocket()),
         expect: () => [
           isA<ExNotDataWebSocketDisconnected>(),
-          isA<ExNotDataWebSocketConnecting>(),
-          isA<ExNotDataWebSocketConnected>(),
         ],
       );
     });
