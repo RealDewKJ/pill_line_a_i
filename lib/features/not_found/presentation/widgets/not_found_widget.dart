@@ -24,9 +24,9 @@ class _NotFoundWidgetState extends State<NotFoundWidget> {
     setState(() {
       _isLoading = true;
     });
-    Endpoints.isEHPConnect = await EHPApi.initializeEHPToken();
+    Endpoints.isEHPConnect = await serviceLocator<EHPApi>().initializeEHPToken();
     if (Endpoints.isEHPConnect) {
-      await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
+      // await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
       context.go('/');
     }
     safeSetState(() {

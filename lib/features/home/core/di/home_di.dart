@@ -8,43 +8,60 @@ import '../../domain/usecases/update_home_settings_usecase.dart';
 import '../../presentation/bloc/home_bloc.dart';
 import '../../presentation/bloc/pill_line_bloc.dart';
 
-void setupHomeDI(GetIt getIt) {
-  // Data sources
-  getIt.registerLazySingleton<HomeRemoteDataSource>(
-    () => HomeRemoteDataSourceImpl(),
-  );
+class HomeDI {
+  static final GetIt _getIt = GetIt.instance;
 
-  // Repositories
-  getIt.registerLazySingleton<HomeRepository>(
-    () => HomeRepositoryImpl(
-      remoteDataSource: getIt<HomeRemoteDataSource>(),
-    ),
-  );
+  static void init() {
+    // Data sources
+    _getIt.registerLazySingleton<HomeRemoteDataSource>(
+      () => HomeRemoteDataSourceImpl(),
+    );
 
-  // Use cases
-  getIt.registerLazySingleton<GetHomeDataUseCase>(
-    () => GetHomeDataUseCase(
-      repository: getIt<HomeRepository>(),
-    ),
-  );
+    // Repositories
+    _getIt.registerLazySingleton<HomeRepository>(
+      () => HomeRepositoryImpl(
+        remoteDataSource: _getIt<HomeRemoteDataSource>(),
+      ),
+    );
 
-  getIt.registerLazySingleton<UpdateHomeSettingsUseCase>(
-    () => UpdateHomeSettingsUseCase(
-      repository: getIt<HomeRepository>(),
-    ),
-  );
+    // Use cases
+    _getIt.registerLazySingleton<GetHomeDataUseCase>(
+      () => GetHomeDataUseCase(
+        repository: _getIt<HomeRepository>(),
+      ),
+    );
 
-  // BLoCs
-  getIt.registerFactory<HomeBloc>(
-    () => HomeBloc(
-      getHomeDataUseCase: getIt<GetHomeDataUseCase>(),
-      updateHomeSettingsUseCase: getIt<UpdateHomeSettingsUseCase>(),
-    ),
-  );
+    _getIt.registerLazySingleton<UpdateHomeSettingsUseCase>(
+      () => UpdateHomeSettingsUseCase(
+        repository: _getIt<HomeRepository>(),
+      ),
+    );
 
-  getIt.registerFactory<PillLineBloc>(
-    () => PillLineBloc(
-      socketController: getIt<SocketController>(),
-    ),
-  );
+    // BLoCs
+    _getIt.registerFactory<HomeBloc>(
+      () => HomeBloc(
+        getHomeDataUseCase: _getIt<GetHomeDataUseCase>(),
+        updateHomeSettingsUseCase: _getIt<UpdateHomeSettingsUseCase>(),
+      ),
+    );
+
+    _getIt.registerFactory<PillLineBloc>(
+      () => PillLineBloc(
+        socketController: _getIt<SocketController>(),
+      ),
+    );
+  }
+
+  static void dispose() {
+    try {
+      _getIt.unregister<HomeRemoteDataSource>();
+      _getIt.unregister<HomeRepository>();
+      _getIt.unregister<GetHomeDataUseCase>();
+      _getIt.unregister<UpdateHomeSettingsUseCase>();
+      _getIt.unregister<HomeBloc>();
+      _getIt.unregister<PillLineBloc>();
+    } catch (e) {
+      // Ignore errors if dependencies are not registered
+    }
+  }
 }

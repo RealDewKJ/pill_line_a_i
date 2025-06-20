@@ -9,7 +9,7 @@ class ExNotDataRemoteDataSourceImpl implements ExNotDataRemoteDataSource {
   @override
   Future<ExNotData> getExNotData() async {
     // Simulate API call delay
-    await Future.delayed(Duration(milliseconds: 500));
+    await Future.delayed(const Duration(milliseconds: 500));
 
     // Return mock data for now
     // TODO: Replace with actual API call
@@ -26,7 +26,7 @@ class ExNotDataRemoteDataSourceImpl implements ExNotDataRemoteDataSource {
   @override
   Future<void> updateExNotData(ExNotData data) async {
     // Simulate API call delay
-    await Future.delayed(Duration(milliseconds: 300));
+    await Future.delayed(const Duration(milliseconds: 300));
 
     // TODO: Replace with actual API call
     // For now, just simulate successful update

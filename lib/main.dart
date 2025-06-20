@@ -7,6 +7,7 @@ import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
 import 'package:pill_line_a_i/flutter_flow/flutter_flow_util.dart';
+import 'package:pill_line_a_i/utils/helper/shared_preference/shared_preference_helper.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,18 +17,26 @@ void main() async {
   // Setup all dependencies
   setupServiceLocator();
 
+  // Initialize Shared Preferences
+  await SharedPrefHelper.init();
+
   // Initialize EHP
-  Endpoints.isEHPConnect = await EHPApi.initializeEHPToken();
+  Endpoints.isEHPConnect = await serviceLocator<EHPApi>().initializeEHPToken();
   if (Endpoints.isEHPConnect) {
-    await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
+    // await serviceLocator<EHPApi>().getUserJWT('0000000000001', 'admin');
   }
 
   Intl.defaultLocale = "th";
-  runApp(const MyApp());
+
+  // Always start at login page
+  String initialRoute = '/login';
+
+  runApp(MyApp(initialRoute: initialRoute));
 }
 
 class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+  final String initialRoute;
+  const MyApp({super.key, required this.initialRoute});
 
   @override
   State<MyApp> createState() => _MyAppState();
@@ -60,7 +69,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _appStateNotifier = AppStateNotifier.instance;
-    _router = createRouter(_appStateNotifier);
+    _router = createRouter(_appStateNotifier, widget.initialRoute);
   }
 
   void setThemeMode(ThemeMode mode) => safeSetState(() {

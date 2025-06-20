@@ -1,10 +1,14 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 import 'package:pill_line_a_i/core/di/service_locator.dart';
 import 'package:pill_line_a_i/features/ex_notdata/presentation/bloc/ex_notdata_bloc.dart';
 import 'package:pill_line_a_i/features/home/presentation/bloc/home_bloc.dart';
+import 'package:pill_line_a_i/features/login/presentation/bloc/login_bloc.dart';
+import 'package:pill_line_a_i/features/login/presentation/bloc/provider_bloc.dart';
 import 'package:pill_line_a_i/features/not_found/presentation/bloc/not_found_bloc.dart';
 import 'package:pill_line_a_i/features/ex_notdata/presentation/pages/ex_notdata_page.dart';
 import 'package:pill_line_a_i/features/home/presentation/pages/home_page.dart';
@@ -13,6 +17,10 @@ import 'package:pill_line_a_i/flutter_flow/flutter_flow_theme.dart';
 import 'package:pill_line_a_i/flutter_flow/flutter_flow_util.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_endpoint.dart';
 import 'package:provider/provider.dart';
+import 'package:pill_line_a_i/features/login/presentation/widgets/login_widget.dart';
+import 'package:pill_line_a_i/features/login/presentation/widgets/pin_page.dart';
+import 'package:pill_line_a_i/utils/helper/shared_preference/shared_preference_helper.dart';
+import 'package:jwt_decode/jwt_decode.dart';
 
 import '/flutter_flow/flutter_flow_util.dart';
 
@@ -39,8 +47,8 @@ class AppStateNotifier extends ChangeNotifier {
   }
 }
 
-GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
-      initialLocation: '/',
+GoRouter createRouter(AppStateNotifier appStateNotifier, [String initialRoute = '/login']) => GoRouter(
+      initialLocation: initialRoute,
       debugLogDiagnostics: true,
       refreshListenable: appStateNotifier,
       navigatorKey: appNavigatorKey,
@@ -49,12 +57,47 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
         child: const NotFoundPage(),
       ),
       redirect: (context, state) {
-        if (!Endpoints.isEHPConnect) {
-          return NotFoundPage.routePath;
+        final bool isLoggedIn = SharedPrefHelper.prefs.getString('apiUserJWT')?.isNotEmpty ?? false;
+        if (isLoggedIn) {
+          // Restore JWT and profile info from SharedPreferences
+          Endpoints.apiUserJWT = SharedPrefHelper.prefs.getString('apiUserJWT') ?? '';
+          if (Endpoints.apiUserJWT.isNotEmpty) {
+            Endpoints.apiUserJWTPayload = Jwt.parseJwt(Endpoints.apiUserJWT);
+            log('Endpoints.apiUserJWTPayload = ${Endpoints.apiUserJWTPayload}');
+            final profile = Endpoints.apiUserJWTPayload['client']?['profile'] ?? {};
+            EHPMobile.loginName = profile['cid'] ?? '';
+            EHPMobile.userName = profile['full_name'] ?? '';
+            EHPMobile.hospitalAddressCode = profile['hospital_address_code'] ?? '';
+            EHPMobile.hospitalProvinceName = profile['hospital_province_name'] ?? '';
+            EHPMobile.hospitalDistrictName = profile['hospital_district_name'] ?? '';
+            EHPMobile.hospitalTambolName = profile['hospital_tambol_name'] ?? '';
+          }
+        }
+        final bool isOnLogin = state.uri.toString() == '/login';
+        if (!isLoggedIn && !isOnLogin) {
+          return '/login';
+        }
+        if (isLoggedIn && isOnLogin) {
+          return '/ex_notdata';
         }
         return null;
       },
       routes: [
+        FFRoute(
+          name: 'login',
+          path: '/login',
+          builder: (context, _) => MultiBlocProvider(
+            providers: [
+              BlocProvider<LoginBloc>(
+                create: (context) => serviceLocator<LoginBloc>(),
+              ),
+              BlocProvider<ProviderBloc>(
+                create: (context) => ProviderBloc(),
+              ),
+            ],
+            child: const LoginWidget(),
+          ),
+        ),
         FFRoute(
           name: '_initialize',
           path: '/',

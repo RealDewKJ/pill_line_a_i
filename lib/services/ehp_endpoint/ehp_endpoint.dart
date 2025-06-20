@@ -14,6 +14,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 import 'package:event_bus/event_bus.dart';
 import 'package:encrypt/encrypt.dart' as enc;
+import 'package:shared_preferences/shared_preferences.dart';
 
 // import 'ehp_api.dart';
 // import 'package:geocoding/geocoding.dart';
@@ -726,3 +727,5 @@ String formatThaiTime(DateTime? date) {
 //     debugPrint(e);
 //   });
 // }
+
+

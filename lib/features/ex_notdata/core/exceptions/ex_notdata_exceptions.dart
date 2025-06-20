@@ -10,13 +10,13 @@ class ExNotDataException implements Exception {
 }
 
 class ExNotDataConnectionException extends ExNotDataException {
-  const ExNotDataConnectionException(String message, {String? code, dynamic details}) : super(message, code: code, details: details);
+  const ExNotDataConnectionException(super.message, {super.code, super.details});
 }
 
 class ExNotDataNavigationException extends ExNotDataException {
-  const ExNotDataNavigationException(String message, {String? code, dynamic details}) : super(message, code: code, details: details);
+  const ExNotDataNavigationException(super.message, {super.code, super.details});
 }
 
 class ExNotDataMessageException extends ExNotDataException {
-  const ExNotDataMessageException(String message, {String? code, dynamic details}) : super(message, code: code, details: details);
+  const ExNotDataMessageException(super.message, {super.code, super.details});
 }

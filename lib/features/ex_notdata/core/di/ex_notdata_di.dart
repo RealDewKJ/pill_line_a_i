@@ -21,7 +21,7 @@ class ExNotDataDI {
 
   static void init() {
     // Reset first to ensure clean state
-    reset();
+    // reset();
 
     // Data Sources
     _getIt.registerLazySingleton<ExNotDataRemoteDataSource>(

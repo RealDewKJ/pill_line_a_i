@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart' as dio;
 
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 // ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 import 'package:jwt_decode/jwt_decode.dart';
@@ -338,13 +339,25 @@ class CallApiController {
             log('[ApiToken]:${Endpoints.apiJWT}');
             log('[ApiUserToken]:${Endpoints.apiUserJWT}');
           } else {
-            await EHPApi.showAPIErrorDialog(response);
+            final context = Get.overlayContext;
+            if (context == null) {
+              debugPrint('No overlay context for error dialog');
+              return false;
+            }
+            if (!await EHPApi.checkResponseIsValid(response)) {
+              // Extract error message from response
+              final errorMsg = response.data['Message']?.toString() ?? 'Unknown error';
+              throw Exception(errorMsg);
+            }
           }
         } catch (e) {
-          debugPrint('getUserJWT ERROR:$e');
-          await EHPApi.showErrorDialog(e.toString());
-
-          //return Response(data: {}, requestOptions: RequestOptions(), statusCode: 500, statusMessage: 'Request Failed');
+          String errorMsg = 'เกิดข้อผิดพลาด: ';
+          if (e is Exception) {
+            errorMsg += e.toString().replaceFirst('Exception: ', '');
+          } else {
+            errorMsg += e.toString();
+          }
+          throw Exception(errorMsg);
         }
 
         return true;

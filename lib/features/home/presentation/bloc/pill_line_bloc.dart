@@ -165,7 +165,6 @@ class PillLineBloc extends Bloc<PillLineEvent, PillLineState> {
 
       await Future.delayed(const Duration(seconds: 1));
       final vn = event.vn ?? _currentVn;
-      log('vn = $vn');
 
       final pillLines = await _fetchDrugitemsFromVN(vn: vn);
       _pillLines = pillLines;

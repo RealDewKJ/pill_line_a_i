@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:pill_line_a_i/controllers/socket_controller.dart';
+import 'package:pill_line_a_i/utils/helper/shared_preference/shared_preference_helper.dart';
 import 'package:pill_line_a_i/utils/socket_error_handler.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/dio_client.dart';
 import 'package:pill_line_a_i/services/ehp_endpoint/ehp_api.dart';
@@ -13,6 +14,12 @@ import 'package:pill_line_a_i/features/ex_notdata/presentation/bloc/ex_notdata_b
 import 'package:pill_line_a_i/features/video_stream/core/di/video_stream_di.dart';
 import 'package:pill_line_a_i/features/ex_notdata/core/di/ex_notdata_di.dart';
 import 'package:pill_line_a_i/features/home/core/di/home_di.dart';
+import 'package:pill_line_a_i/features/login/presentation/bloc/login_bloc.dart';
+import 'package:pill_line_a_i/features/login/data/datasources/login_remote_data_source.dart';
+import 'package:pill_line_a_i/features/login/data/repositories/login_repository_impl.dart';
+import 'package:pill_line_a_i/features/login/domain/repositories/login_repository.dart';
+import 'package:pill_line_a_i/features/login/domain/usecases/login_usecase.dart';
+import 'package:pill_line_a_i/features/login/core/di/login_di.dart';
 
 GetIt serviceLocator = GetIt.instance;
 
@@ -25,6 +32,7 @@ void setupServiceLocator() {
   serviceLocator.registerSingleton(PHRDioClient(Dio()));
   serviceLocator.registerSingleton(FCMDioClient(Dio()));
   serviceLocator.registerSingleton(EHPApi(dioClient: serviceLocator<DioClient>()));
+
   serviceLocator.registerSingleton<SocketErrorHandler>(SocketErrorHandler());
 
   // Controllers
@@ -62,5 +70,11 @@ void setupServiceLocator() {
   ExNotDataDI.init();
 
   // Setup Home dependencies
-  setupHomeDI(serviceLocator);
+  HomeDI.init();
+
+  // Setup Login dependencies
+  LoginDI.init();
+
+  // Initialize SharedPreferences
+  SharedPrefHelper.init();
 }

@@ -86,7 +86,6 @@ class EHPApi {
 
       if (rdata.containsKey('call_stack')) {
         debugPrint('call_stack detected !');
-        showAPIErrorDialog(response);
         return false;
       }
 
@@ -95,95 +94,26 @@ class EHPApi {
       }
 
       if (rdata.containsKey('MessageCode') && rdata.containsKey('Message') && (response.data['MessageCode'] == 401)) {
-        await showJWTErrorDialog();
         return true;
       }
 
       if (rdata.containsKey('MessageCode') && rdata.containsKey('Message') && (response.data['MessageCode'] != 200)) {
-        showAPIErrorDialog(response);
         return false;
       }
 
       if (response.data['result'].toString().isNotEmpty) {
         return true;
       }
-    } else {
+
       if (rdata.containsKey('MessageCode') && rdata.containsKey('Message') && (response.data['MessageCode'] == 401)) {
-        await showJWTErrorDialog();
         return true;
       }
 
       log('showAPIErrorDialog from else checkResponseIsValid');
-      showAPIErrorDialog(response);
     }
 
     return false;
   }
-
-  /* static bool checkResponseIsValid(Response response) {
-    if (response.statusCode == 200) {
-      //  debugPrint('response.data = ${response.data}');
-
-      if (response.data == null) return false;
-
-      final rdata = (response.data as Map);
-
-      if (rdata.containsKey('call_stack')) {
-        debugPrint('call_stack detected !');
-
-        final callStackString = '${rdata['call_stack'] ?? ''}';
-        for (var s in callStackString.split('\r\n')) {
-          debugPrint(s);
-        }
-      } else {
-        debugPrint('no call_stack');
-      }
-
-      if (rdata.containsKey('sWhere')) {
-        debugPrint('sWhere : ${rdata['sWhere']}');
-      }
-
-      if (rdata.containsKey('debug_sql')) {
-        log('MessageCode : ${rdata['MessageCode']}');
-        log('debug_sql : ${rdata['debug_sql']}');
-      }
-
-      if (rdata.containsKey('sWhereBinding')) {
-        debugPrint('sWhereBinding : ${rdata['sWhereBinding']}');
-      }
-
-      //field_name
-
-      if (rdata.containsKey('field_name')) {
-        //  debugPrint('field_name : ${rdata['field_name']}');
-        log_dev.log('${rdata['field_name']}', name: 'field_name');
-      }
-
-      if (rdata.containsKey('MessageCode') && rdata.containsKey('Message') && (response.data['MessageCode'] != 200)) {
-        return false;
-      }
-
-      if (response.data['result'].toString().isNotEmpty) {
-        return true;
-      }
-    } else {
-      if (response.data == null) return false;
-      final rdata = (response.data as Map);
-
-      if (rdata.containsKey('call_stack')) {
-        debugPrint('call_stack detected !');
-
-        final callStackString = '${rdata['call_stack'] ?? ''}';
-        for (var s in callStackString.split('\r\n')) {
-          debugPrint(s);
-        }
-      } else {
-        debugPrint('no call_stack');
-      }
-    }
-
-    return false;
-  } */
 
   static String getAPIResponseMessage(dio.Response response) {
     final rdata = response.data as Map;
@@ -211,24 +141,6 @@ class EHPApi {
       return false;
     }
     return true;
-
-    // if (response.statusCode == 200) {
-    //   final rdata = response.data as Map;
-
-    //   if (rdata.containsKey('MessageCode') && rdata.containsKey('Message') && (response.data['MessageCode'] != 200)) {
-    //     _showSnackBar(rdata['Message'] ?? '');
-
-    //     return false;
-    //   }
-
-    //   if (response.data['result'].toString().isNotEmpty) {
-    //     return true;
-    //   }
-    // }
-
-    // _showSnackBar('Invalid response');
-
-    // return false;
   }
 
   static String getResponseMessage(dio.Response response) {
@@ -457,54 +369,54 @@ class EHPApi {
   //   }
   // }
 
-  Future<dio.Response> getUserJWT(String cid, String password) async {
-    Endpoints.apiUserJWT = '';
-    Endpoints.apiUserJWTPayload.clear();
-    log('getUserJWT with $cid and hash ${createHmacSha256Hash(password, 'bms+')}');
-    try {
-      final dio.Response response = await dioClient.post(
-        '${Endpoints.tokenPath}?Action=USER',
-        data: {
-          'cid': cid,
-          'password_hash': createHmacSha256Hash(password, 'bms+'),
-        },
-        authHeader: Endpoints.apiSessionToken,
-      );
+  // Future<dio.Response> getUserJWT(String cid, String password) async {
+  //   Endpoints.apiUserJWT = '';
+  //   Endpoints.apiUserJWTPayload.clear();
+  //   log('getUserJWT with $cid and hash ${createHmacSha256Hash(password, 'bms+')}');
+  //   try {
+  //     final dio.Response response = await dioClient.post(
+  //       '${Endpoints.tokenPath}?Action=USER',
+  //       data: {
+  //         'cid': cid,
+  //         'password_hash': createHmacSha256Hash(password, 'bms+'),
+  //       },
+  //       authHeader: Endpoints.apiSessionToken,
+  //     );
 
-      debugPrint('getUserJWT response.data = $response.data');
+  //     debugPrint('getUserJWT response.data = $response.data');
 
-      if (await checkResponseIsValid(response)) {
-        Endpoints.apiUserJWT = response.data['result'].toString();
+  //     if (await checkResponseIsValid(response)) {
+  //       Endpoints.apiUserJWT = response.data['result'].toString();
 
-        debugPrint('Endpoints.apiUserJWT = ${Endpoints.apiUserJWT}');
+  //       debugPrint('Endpoints.apiUserJWT = ${Endpoints.apiUserJWT}');
 
-        if (Endpoints.apiUserJWT.isNotEmpty) {
-          Endpoints.apiUserJWTPayload = Jwt.parseJwt(Endpoints.apiUserJWT);
-          log('Endpoints.apiUserJWTPayload = ${Endpoints.apiUserJWTPayload}');
+  //       if (Endpoints.apiUserJWT.isNotEmpty) {
+  //         Endpoints.apiUserJWTPayload = Jwt.parseJwt(Endpoints.apiUserJWT);
+  //         log('Endpoints.apiUserJWTPayload = ${Endpoints.apiUserJWTPayload}');
 
-          log('client.profile = ${Endpoints.apiUserJWTPayload['client']['profile']}');
+  //         log('client.profile = ${Endpoints.apiUserJWTPayload['client']['profile']}');
 
-          EHPMobile.loginName = Endpoints.apiUserJWTPayload['client']['profile']['cid'] ?? '';
-          EHPMobile.userName = Endpoints.apiUserJWTPayload['client']['profile']['full_name'] ?? '';
-          log('EHPMobile.loginName : ${EHPMobile.loginName}');
-          log('EHPMobile.userName : ${EHPMobile.userName}');
-          EHPMobile.hospitalAddressCode = Endpoints.apiUserJWTPayload['client']['profile']['hospital_address_code'] ?? '';
-          EHPMobile.hospitalProvinceName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_province_name'] ?? '';
-          EHPMobile.hospitalDistrictName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_district_name'] ?? '';
-          EHPMobile.hospitalTambolName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_tambol_name'] ?? '';
-          log('dex:: Endpoints.apiUserJWT = ${Endpoints.apiUserJWT}');
-        }
-      } else {
-        await showAPIErrorDialog(response);
-      }
+  //         EHPMobile.loginName = Endpoints.apiUserJWTPayload['client']['profile']['cid'] ?? '';
+  //         EHPMobile.userName = Endpoints.apiUserJWTPayload['client']['profile']['full_name'] ?? '';
+  //         log('EHPMobile.loginName : ${EHPMobile.loginName}');
+  //         log('EHPMobile.userName : ${EHPMobile.userName}');
+  //         EHPMobile.hospitalAddressCode = Endpoints.apiUserJWTPayload['client']['profile']['hospital_address_code'] ?? '';
+  //         EHPMobile.hospitalProvinceName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_province_name'] ?? '';
+  //         EHPMobile.hospitalDistrictName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_district_name'] ?? '';
+  //         EHPMobile.hospitalTambolName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_tambol_name'] ?? '';
+  //         log('dex:: Endpoints.apiUserJWT = ${Endpoints.apiUserJWT}');
+  //       }
+  //     } else {
+  //       await showAPIErrorDialog(response);
+  //     }
 
-      return response;
-    } catch (e) {
-      debugPrint('getUserJWT ERROR:$e');
-      // await showErrorDialog(e.toString());
-      return dio.Response(data: {}, requestOptions: dio.RequestOptions(), statusCode: 500, statusMessage: 'Request Failed');
-    }
-  }
+  //     return response;
+  //   } catch (e) {
+  //     debugPrint('getUserJWT ERROR:$e');
+  //     // await showErrorDialog(e.toString());
+  //     return dio.Response(data: {}, requestOptions: dio.RequestOptions(), statusCode: 500, statusMessage: 'Request Failed');
+  //   }
+  // }
 
   // Future<List<Organization>> getOrganizedFromJWT(String cid, String password) async {
   //   Endpoints.apiUserJWT = '';
@@ -572,13 +484,14 @@ class EHPApi {
     Endpoints.apiUserJWTPayload.clear();
 
     try {
+      log('getUserJWTFromMOPHIDP ${Endpoints.tokenPath}?Action=USER ', name: 'callWithMophProvider');
       final dio.Response response = await dioClient.post(
-        '${Endpoints.tokenPath}?Action=USER-MOPH-IDP',
-        data: {'idp_jwt': sjwt},
+        '${Endpoints.tokenPath}?Action=USER',
+        data: {'moph_jwt': sjwt},
         authHeader: Endpoints.apiSessionToken,
       );
 
-      //debugPrint('getUserJWT response.data = $response.data');
+      debugPrint('getUserJWT response.data = $response.data');
 
       if (await checkResponseIsValid(response)) {
         Endpoints.apiIDPJWT = sjwt;
@@ -590,17 +503,19 @@ class EHPApi {
 
         if (Endpoints.apiUserJWT.isNotEmpty) {
           Endpoints.apiUserJWTPayload = Jwt.parseJwt(Endpoints.apiUserJWT);
-          // debugPrint('Endpoints.apiUserJWTPayload = ${Endpoints.apiUserJWTPayload}');
+          log('Endpoints.apiUserJWTPayload = ${Endpoints.apiUserJWTPayload}');
 
-          debugPrint('client.profile = ${Endpoints.apiUserJWTPayload['client']['profile']}');
+          log('client.profile = ${Endpoints.apiUserJWTPayload['client']['profile']}');
 
           EHPMobile.loginName = Endpoints.apiUserJWTPayload['client']['profile']['cid'] ?? '';
           EHPMobile.userName = Endpoints.apiUserJWTPayload['client']['profile']['full_name'] ?? '';
-
+          log('EHPMobile.loginName : ${EHPMobile.loginName}');
+          log('EHPMobile.userName : ${EHPMobile.userName}');
           EHPMobile.hospitalAddressCode = Endpoints.apiUserJWTPayload['client']['profile']['hospital_address_code'] ?? '';
           EHPMobile.hospitalProvinceName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_province_name'] ?? '';
           EHPMobile.hospitalDistrictName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_district_name'] ?? '';
           EHPMobile.hospitalTambolName = Endpoints.apiUserJWTPayload['client']['profile']['hospital_tambol_name'] ?? '';
+          log('dex:: Endpoints.apiUserJWT = ${Endpoints.apiUserJWT}');
         }
       }
 
@@ -789,34 +704,19 @@ class EHPApi {
     return null;
   }
 
-  static Future<bool> initializeEHPToken() async {
+  Future<bool> initializeEHPToken() async {
     debugPrint('initializeEHPToken() start ...');
 
     await GetStorage.init();
     EHPMobile.prefs = GetStorage();
 
-    /*  var initError = false;
-     try {
-       EHPMobile.prefs = await SharedPreferences.getInstance();
-     } catch(e) {
-       debugPrint('Error await SharedPreferences ${e}');
-       SharedPreferences.setMockInitialValues({});
-       initError = true;
-     }
-
-     if (initError) {
-       debugPrint('reinit SharedPreferences');
-       EHPMobile.prefs = await SharedPreferences.getInstance();
-       debugPrint('EHPMobile.prefs = ${EHPMobile.prefs}');
-     } */
-
     Endpoints.apiTokenInitOK = false;
-    await serviceLocator<EHPApi>().getAPIJWT();
+    await getAPIJWT();
 
     debugPrint('getAPIJWT() ok');
 
     if (Endpoints.apiJWT.isNotEmpty) {
-      await serviceLocator<EHPApi>().getAPIAccessToken();
+      await getAPIAccessToken();
 
       debugPrint('getAPIAccessToken() ok');
     } else {
@@ -876,13 +776,14 @@ class EHPApi {
     bool hasError = false;
     do {
       try {
+        log('${Endpoints.apiUserJWTPayload['client']['profile']['organization'][0]['organization_code']}');
         final tableName = data.getTableName();
         final hcode = EHPMobile.hospitalCode.isNotEmpty
             ? EHPMobile.hospitalCode
             : Endpoints.apiUserJWTPayload['client']['profile']['organization'][0]['organization_code'];
 
         // do {
-        log('API = ${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter');
+
         final dio.Response response = await dioClient.get(
           '${Endpoints.restAPIPath}/$hcode/$tableName/$idOrFilter',
           //'https://bms1.blogdns.net:443/bmsapiv2uat/RestAPI/00000/$tableName/$idOrFilter',
